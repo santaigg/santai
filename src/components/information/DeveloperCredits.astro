@@ -2,15 +2,22 @@
 import aboutSantaiGG from "../../data/aboutSantaigg.json";
 
 interface Props {
-	class?: string;
+  class?: string;
 }
 
 const { class: className } = Astro.props;
 ---
 
 <span class={className}>
-    Made by 
-{
-    aboutSantaiGG.developers.map((developer) => <a class="font-bold hover:underline" href={developer.social}>@{developer.alias}</a><span class="last:hidden">, </span> )
-}.
+  Made by
+  {
+    aboutSantaiGG.developers.map((developer) => (
+      <>
+        <a class="font-bold hover:underline" href={developer.social}>
+          @{developer.alias}
+        </a>
+        <span class="last:hidden">, </span>
+      </>
+    ))
+  }.
 </span>
