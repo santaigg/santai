@@ -14,7 +14,8 @@ const { hidden = false } = Astro.props;
     !hidden &&
     <div class="mt-40"></div>
     <footer class="w-full mt-auto p-base outline outline-4 outline-offset-4 outline-accent text-center bg-accent text-xs text-dark-0 font-semibold">
-      <a class="block mb-base font-bold hover:underline" href="https://github.com/santaigg" target="_blank" rel="noopener">Contribute to Santai.GG</a>
+      <a class="block mb-base font-bold hover:underline" href={aboutSantaiGG.discord} target="_blank" rel="noopener">Join The Discord</a>
+      <DeveloperCredits class="block mb-base" />
       {aboutSantaiGG.affiliateNotice}
     </footer>
 }
