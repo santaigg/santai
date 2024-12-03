@@ -304,10 +304,47 @@ function getMatchQueueName(queueName: string, used_team_rank: boolean) {
   </div>
   <button class="mt-4 bg-accent text-dark-0 px-4 py-2 rounded-lg">Refresh Matches</button>
 </div>
-{:else if hasError}
-<div class="bg-[#09090b] rounded-lg p-4">
-  <h2 class="text-2xl font-bold text-light-1 mb-4">Match History</h2>
-  <p class="text-red-500">{errorMessage}</p>
+{:else if !playerFullProfile?.matches?.length}
+  <div class="bg-[#09090b] rounded-lg p-8">
+    <div class="bg-[#131315] rounded-lg p-6 text-center">
+      <h3 class="text-xl text-light-1 font-bold mb-2">No Data Available</h3>
+      <p class="font-semibold text-light-2 mb-2">
+        No matches found! Add your first match using the button below.
+      </p>
+      <p class="text-light-2 mb-6">
+        Currently, we cannot automatically track matches that do not contain a three-stack on either team.
+        Utilize the "Add Match" button to ensure all your matches are tracked.
+      </p>
+      <div class="flex justify-center space-x-2">
+        <button
+          on:click={refreshMatches}
+          class="px-4 py-2 bg-[#131315] text-[#f9c61f] rounded-md flex items-center border border-[#f9c61f] hover:bg-[#f9c61f] hover:text-[#131315] transition-colors duration-300"
+          disabled={isRefreshing}
+        >
+          {#if isRefreshing}
+            <svg class="animate-spin h-5 w-5 mr-2" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+          {:else}
+            <svg class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd" />
+            </svg>
+          {/if}
+          Refresh Matches
+        </button>
+        
+        <button
+          on:click={() => showAddMatchModal = true}
+          class="px-4 py-2 bg-[#131315] text-[#f9c61f] rounded-md flex items-center border border-[#f9c61f] hover:bg-[#f9c61f] hover:text-[#131315] transition-colors duration-300"
+        >
+          <svg class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
+          </svg>
+          Add Match
+        </button>
+      </div>
+    </div>
 </div>
 {:else}
     <div class="last-20-stats bg-[#09090b] rounded-lg p-4 mb-4 border-[#131315] border-2">
