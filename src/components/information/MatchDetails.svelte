@@ -16,23 +16,12 @@
     return playerWithGreatestMvpScore == null || playerMvpScore > calculateMvpScore(playerWithGreatestMvpScore);
   }
 
-  function updateMvpWithNewPlayer(player: Match_Team["players"][0]): void {
+  function updateMvpWithNewPlayer(player: Match_Team["players"][0]): string {
     if (checkIfMvpScoreIsGreaterThanLastMvp(player)) {
       playerWithGreatestMvpScore = player;
     }
-  }
 
-  function giveMvpStar() {
-    if (!playerWithGreatestMvpScore) {
-      return;
-    }
-
-    console.log(playerWithGreatestMvpScore.name);
-
-    let mvpStar = document.getElementById(playerWithGreatestMvpScore.name + "_mvp_star");
-    if (mvpStar) {
-      (mvpStar as HTMLFormElement).setAttribute("display", "inline");
-    }
+    return "";
   }
 
   function getScoreColor(score: number): string {
