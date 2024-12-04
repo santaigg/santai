@@ -2,6 +2,7 @@
   import { cubicOut } from "svelte/easing";
   import { slide } from "svelte/transition";
   import type { PlayerMatch, Match_Team } from "../../utils/types/wavescan.types";
+  import { forEach } from "lodash-es";
 
   export let match: PlayerMatch;
   let playerWithGreatestMvpScore: Match_Team["players"][0] | null = null;
@@ -23,6 +24,12 @@
 
     return "";
   }
+
+  const matchPlayers = match.opponent_team ? [...match.player_team.players, ...match.opponent_team?.players] : match.player_team.players;
+
+  matchPlayers.forEach((player) => {
+    updateMvpWithNewPlayer(player);
+  });
 
   function getScoreColor(score: number): string {
     if (score >= 300) return "teal-400";
@@ -138,7 +145,6 @@
               <div class="w-1/4 sm:w-1/6 md:w-1/12 text-xs"><p>KPR</p></div>
             </div>
             {#each team.players as player, index}
-              {updateMvpWithNewPlayer(player)}
               <div class={getRowClass(index, teamIndex === 0)}>
                 <div class="w-full sm:w-1/3 flex items-center justify-start mb-2 sm:mb-0">
                   <a href={`/players/${player.id}`} class="flex items-center gap-2">
