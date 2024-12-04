@@ -19,5 +19,6 @@
 		}
 	],
 	"discord": "https://discord.gg/santaigg",
-	"github": "https://github.com/santaigg/santai"
+	"github": "https://github.com/santaigg/santai",
+	"wavescanDocs": "https://wavescan-production.up.railway.app/api/v1/swagger"
 }
