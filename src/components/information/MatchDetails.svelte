@@ -122,14 +122,6 @@
 </script>
 
 <div transition:slide={{ duration: 300, easing: cubicOut }} class="border-t-neutral-600/[0.25] border-t-2 grid border-solid gap-2 p-2 w-full">
-  <div class="items-center flex text-sm font-medium">
-    <button
-      class={`items-center border-b-neutral-600/[0.25] rounded-bl-md border-b-2 border-l-neutral-600/[0.25] border-l-2 border-t-neutral-600/[0.25] rounded-tl-md border-t-2 cursor-pointer flex-grow justify-center py-1 px-3 text-center flex w-32 h-9 text-zinc-100 border-r-2 border-r-neutral-600/[0.25] rounded-tr-md rounded-br-md ${selectedMatchTab === "scoreboard" ? "bg-[#e6b824]" : "bg-zinc-800"}`}
-      on:click={() => (selectedMatchTab = "scoreboard")}
-    >
-      <span>Scoreboard</span>
-    </button>
-  </div>
   <div class="bg-zinc-900 rounded-md text-zinc-400 overflow-x-auto">
     <div class="min-w-full">
       {#if selectedMatchTab === "scoreboard"}
