@@ -33,7 +33,6 @@ const { class: className, style, pageTitle, hiddenNavbar = false, hiddenFooter =
   </head>
   <body class={cn("flex flex-col min-h-lvh bg-dark-0", className)} style={style}>
     <Navbar hidden={hiddenNavbar} noticeBanner="The queue is currently running, but we are still working on updates to the backend. Expect some bugs." />
-    <MaintenanceBanner />
     <slot />
     <Footer hidden={hiddenFooter} />
   </body>
