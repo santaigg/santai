@@ -6,6 +6,7 @@ import Navbar from "../components/navigation/Navbar.astro";
 import Footer from "../components/navigation/Footer.astro";
 import { cn } from "../utils/cn";
 import MaintenanceBanner from "../components/information/MaintenanceBanner.astro";
+import PostHog from '../components/posthog.astro'
 
 interface Props {
 	class?: string;
@@ -37,6 +38,7 @@ const {
     <meta name="generator" content={Astro.generator} />
     <title>{pageTitle}</title>
     <ViewTransitions />
+    <PostHog />
   </head>
   <body class={cn("flex flex-col min-h-lvh bg-dark-0", className)} style={style}>
     <Navbar hidden={hiddenNavbar} darkLogo />
