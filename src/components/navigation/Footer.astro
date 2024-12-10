@@ -21,7 +21,9 @@ const { hidden = false } = Astro.props;
       </div>
       <div class="flex flex-col text-center md:text-left">
         <DeveloperCredits class="mb-base" />
-        {aboutSantaiGG.affiliateNotice}
+        <div class="max-w-96">
+          {aboutSantaiGG.affiliateNotice}
+        </div>
       </div>
     </footer>
 }
