@@ -1,5 +1,6 @@
 ---
 import Logo from "./Logo.astro";
+import navbarLinks from "../../data/navbarLinks.json";
 
 interface Props {
 	hidden?: boolean;
@@ -13,12 +14,28 @@ const { hidden = false, noticeBanner } = Astro.props;
     !hidden &&
     <div class="mb-16"></div>
     <div class="fixed top-0 z-50 w-full">
+      <!-- NOTICE BANNER -->
       <div class="m-base p-small border border-dashed border-warning text-xs text-warning backdrop-blur-3xl">
         <svg class="inline mx-1" width="16px" height="16px" stroke-width="1.5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" color="#eb7e47"><path d="M12 7L12 13" stroke="#eb7e47" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path><path d="M12 17.01L12.01 16.9989" stroke="#eb7e47" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></path><path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="#eb7e47" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>
         {noticeBanner}
       </div>
-      <div class="flex flex-row p-base">
+
+      <!-- NAVBAR -->
+      <div class="flex flex-row p-large">
         <Logo class='w-24 md:w-32' />
+
+        <div class="hidden md:flex flex-row gap-base ml-large font-dharmagothic text-2xl">
+          {
+            navbarLinks.links.length != 0 &&
+            navbarLinks.links.map((item) => (
+              <a href={item.url} class="text-white">
+                {item.title}
+              </a>
+            ))
+          }
+        </div>
+
+        <!-- SOCIAL ICONS -->
         <div class="ml-auto">
           <svg class="w-6 h-6 fill-light-0 group-hover/card:fill-dark-0" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                   <path
@@ -30,5 +47,3 @@ const { hidden = false, noticeBanner } = Astro.props;
       </div>
     </div>
 }
-
-<!-- outline outline-4 outline-offset-4 outline-accent -->

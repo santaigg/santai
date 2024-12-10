@@ -1,0 +1,16 @@
+{
+    "links": [
+		{
+			"title": "Join the Discord",
+			"url": "https://discord.gg/santaigg"
+		},
+        {
+			"title": "Contribute to Santai.GG",
+			"url": "https://github.com/santaigg/santai"
+		},
+		{
+			"title": "Wavescan API Docs",
+			"url": "https://wavescan-production.up.railway.app/api/v1/swagger"
+		}
+    ]
+}
