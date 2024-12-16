@@ -28,7 +28,7 @@ const { hidden = false, noticeBanner } = Astro.props;
           {
             navbarLinks.links.length != 0 &&
             navbarLinks.links.map((item) => (
-              <a href={item.url} class="text-white">
+              <a href={item.url} class="text-white hover:text-accent">
                 {item.title}
               </a>
             ))
