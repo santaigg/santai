@@ -1,10 +1,9 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import PlayerSearchBar from "../components/navigation/PlayerSearchBar.svelte";
-import Card from "../components/information/Card.astro";
-import aboutSantaiGG from "../data/aboutSantaigg.json";
 import BackgroundImage from "../components/cosmetic/BackgroundImage.astro";
-import Logo from "../components/navigation/Logo.astro";
+import { Image } from "astro:assets";
+import foregroundArt from "../assets/foreground-00.png";
 ---
 
 <Layout pageTitle="Santai.GG">
@@ -12,8 +11,9 @@ import Logo from "../components/navigation/Logo.astro";
     <BackgroundImage imagePath="/src/assets/background-00.png" altText="Spectre Divide - spectators cheering." />
 
     <div class="flex h-[70lvh] mx-large">
-      <div class="flex flex-col w-full max-w-screen-sm m-auto gap-large">
-        <PlayerSearchBar client:load className="max-w-96 my-auto rounded-tl-large bg-light-1" />
+      <div class="w-full max-w-screen-sm m-auto gap-large">
+        <Image src={foregroundArt} alt="Spectre Divide character." class="-z-50 size-1/2 translate-y-12 -scale-x-100 pointer-events-none" />
+        <PlayerSearchBar client:load className="my-auto rounded-tl-large bg-light-1" />
       </div>
     </div>
   </main>

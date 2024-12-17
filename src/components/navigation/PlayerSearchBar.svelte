@@ -85,7 +85,7 @@
 </script>
 
 <div class="search-container relative w-full">
-  <p class="text-light-0 mb-base">Check out player stats & match history!</p>
+  <p class="text-light-0 font-bold mb-base">Check out player stats & match history!</p>
   <input
     class={cn("w-full h-fit p-base overflow-clip rounded-base bg-light-0", className)}
     type="text"
