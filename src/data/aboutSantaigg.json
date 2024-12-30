@@ -1,6 +1,7 @@
 {
 	"siteDescription": "Spectre Divide community hub, leaderboard, and stats.",
 	"affiliateNotice": "Santai.GG is not affiliated with Mountaintop Studios and all associated properties “Spectre Divide” are trademarks or registered trademarks of Mountaintop Studios.",
+	"maintenanceNotice": "The queue is currently paused while we are working on updates to the backend in preparation for Season 1",
 	"developers": [
 		{
 			"name": "Limited-io",

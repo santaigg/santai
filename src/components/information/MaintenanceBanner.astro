@@ -16,7 +16,7 @@ const { class: className } = Astro.props;
         <path d="M12 9V14M12 17.5V17.6M4.6 19H19.4C20.7 19 21.5 17.5 20.9C12.8 3.7 11.2 3.7 10.5 4.8L3.1 16.4C2.5 17.5 3.3 19 4.6 19Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
      </svg>
      <p class="text-accent font-dharmagothic text-lg">
-       <a href={aboutSantaiGG.discord} class="underline hover:no-underline" target="_blank" rel="noopener">Join the Discord for updates.</a> The queue is currently paused while we are working on updates to the backend. Expect some bugs.
+       <a href={aboutSantaiGG.discord} class="underline hover:no-underline" target="_blank" rel="noopener">Join the Discord for updates.</a> {aboutSantaiGG.maintenanceNotice}
      </p>
    </div>
   </div>
