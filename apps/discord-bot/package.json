@@ -1,0 +1,31 @@
+{
+  "name": "discord-bot",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "bun --watch src/index.ts",
+    "start": "NODE_ENV=production bun src/index.ts",
+    "format": "prettier --write .",
+    "check-types": "tsc --noEmit"
+  },
+  "dependencies": {
+    "axios": "^1.7.7",
+    "chalk": "4.1.2",
+    "discord.js": "^14.16.3",
+    "fs-extra": "^11.2.0",
+    "zod": "^3.22.4",
+    "@repo/logger": "*"
+  },
+  "devDependencies": {
+    "@ianvs/prettier-plugin-sort-imports": "^4.1.1",
+    "@types/fs-extra": "^11.0.4",
+    "@repo/bun-test-presets": "*",
+    "@repo/eslint-config": "*",
+    "@repo/typescript-config": "*",
+    "@types/node": "^22.12.0",
+    "eslint": "^9.21.0",
+    "typescript": "5.7.3",
+    "prettier": "^3.2.5"
+  }
+}

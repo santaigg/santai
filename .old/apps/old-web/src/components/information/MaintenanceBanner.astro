@@ -1,0 +1,23 @@
+---
+import { cn } from "../../utils/cn";
+import aboutSantaiGG from "../../data/aboutSantaigg.json";
+
+interface Props {
+  class?: string;
+}
+
+const { class: className } = Astro.props;
+---
+
+<div class={cn("w-full bg-dark-1 border-b-2 border-accent", className)}>
+  <div class="max-w-screen-2xl mx-auto py-2 px-4">
+    <div class="flex items-center justify-center gap-2">
+      <svg class="w-5 h-5 text-accent" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 9V14M12 17.5V17.6M4.6 19H19.4C20.7 19 21.5 17.5 20.9C12.8 3.7 11.2 3.7 10.5 4.8L3.1 16.4C2.5 17.5 3.3 19 4.6 19Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+     </svg>
+     <p class="text-accent font-dharmagothic text-lg">
+       <a href={aboutSantaiGG.discord} class="underline hover:no-underline" target="_blank" rel="noopener">Join the Discord for updates.</a> {aboutSantaiGG.maintenanceNotice}
+     </p>
+   </div>
+  </div>
+</div>

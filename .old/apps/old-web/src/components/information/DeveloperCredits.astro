@@ -1,0 +1,25 @@
+---
+import aboutSantaiGG from "../../data/aboutSantaigg.json";
+
+interface Props {
+  class?: string;
+}
+
+const { class: className } = Astro.props;
+---
+
+<span class={className}>
+  Made by
+  {
+    aboutSantaiGG.developers.map((developer, index) => (
+      <span>
+        <a id="developer-credit" class={`font-bold hover:underline mr-0 pr-0`} href={developer.social} target="_blank" rel="noopener">
+          @{developer.alias}
+        </a>
+        {index !== aboutSantaiGG.developers.length - 1 ? ", " : "."}
+      </span>
+    ))
+  }
+  <a class="font-bold hover:underline" href={aboutSantaiGG.github} target="_blank" rel="noopener"> Join us by contributing to Santai.GG</a>
+</span>
+

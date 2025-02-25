@@ -1,0 +1,3 @@
+[submodule "apps/pulsefinder"]
+	path = apps/pulsefinder
+	url = https://github.com/santaigg/pulsefinder.git

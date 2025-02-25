@@ -1,0 +1,25 @@
+{
+  "name": "api",
+  "version": "1.0.0",
+  "scripts": {
+    "test": "bun test --preload @repo/bun-test-presets",
+    "build": "bun build src/index.ts --outdir dist --target bun",
+    "start": "bun run dist/index.js",
+    "dev": "bun run --watch src/index.ts",
+    "check-types": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@elysiajs/cors": "^1.2.0",
+    "@elysiajs/swagger": "^1.2.2",
+    "@repo/logger": "*",
+    "elysia": "latest"
+  },
+  "devDependencies": {
+    "bun-types": "latest",
+    "@repo/eslint-config": "*",
+    "@repo/typescript-config": "*",
+    "@repo/bun-test-presets": "*"
+  },
+  "module": "src/index.js",
+  "private": true
+}

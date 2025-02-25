@@ -1,0 +1,43 @@
+{
+  "name": "new",
+  "private": true,
+  "scripts": {
+    "build": "turbo build",
+    "build:web": "turbo run build --filter=web",
+    "build:old-web": "turbo run build --filter=old-web",
+    "build:tempthing": "turbo run build --filter=tempthing",
+    "build:pulsefinder": "turbo run build --filter=pulsefinder",
+    "build:discord-bot": "turbo run build --filter=discord-bot",
+    "dev": "turbo dev",
+    "dev:web": "turbo run dev --filter=web",
+    "dev:docs": "turbo run dev --filter=docs",
+    "dev:old-web": "turbo run dev --filter=old-web",
+    "dev:tempthing": "turbo run dev --filter=tempthing",
+    "dev:pulsefinder": "turbo run dev --filter=pulsefinder",
+    "dev:discord-bot": "turbo run dev --filter=discord-bot",
+    "lint": "turbo lint",
+    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "start": "turbo run start",
+    "start:web": "turbo run start --filter=web",
+    "start:old-web": "turbo run start --filter=old-web",
+    "start:tempthing": "turbo run start --filter=tempthing",
+    "start:pulsefinder": "turbo run start --filter=pulsefinder",
+    "start:discord-bot": "turbo run start --filter=discord-bot",
+    "build:desktop": "turbo run build --filter=santai-desktop",
+    "dev:desktop": "turbo run dev --filter=santai-desktop",
+    "tauri": "turbo run tauri --filter=santai-desktop"
+  },
+  "devDependencies": {
+    "prettier": "^3.4.2",
+    "turbo": "^2.4.0",
+    "typescript": "5.7.3"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "packageManager": "bun@1.2.2",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ]
+}

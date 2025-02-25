@@ -1,0 +1,75 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+	:root {
+		--dark-0: 230 20% 6%;
+		--dark-1: 230 10% 12%;
+		--dark-2: 230 5% 18%;
+
+		--accent: 46 95% 55%;
+
+		--light-0: 20 10% 80%;
+		--light-1: 20 6% 88%;
+		--light-2: 20 2% 96%;
+
+		--warning: 20 80% 60%;
+		--destructive: 0 100% 60%;
+
+		--radius-small: 0.05; /* 0.1 */
+		--radius-base: 0.1; /* 0.3 */
+		--radius-large: 0.2; /* 0.8 */
+
+		--spacing-small: 0.2rem;
+		--spacing-base: 0.5rem;
+		--spacing-large: 2rem;
+
+		--duration-quick: 0.07s;
+		--duration-base: 0.14s;
+	}
+
+	html {
+		font-family: "Inter", sans-serif;
+	}
+
+	@font-face {
+		font-family: "Inter";
+		src: url("/fonts/Inter/Inter-VariableFont_slnt,wght.ttf") format("woff2");
+	}
+
+	@font-face {
+		font-family: "Planet Kosmos";
+		src: url("/fonts/PlanetKosmos/planetkosmos.ttf") format("woff2");
+	}
+
+	@font-face {
+		font-family: "Dharma Gothic";
+		src: url("/fonts/DharmaGothic/DharmaGothicE_ExLight_R.otf") format("woff2");
+		font-weight: 200;
+	}
+
+	@font-face {
+		font-family: "Dharma Gothic";
+		src: url("/fonts/DharmaGothic/DharmaGothicE_Light_R.otf") format("woff2");
+		font-weight: 300;
+	}
+
+	@font-face {
+		font-family: "Dharma Gothic";
+		src: url("/fonts/DharmaGothic/DharmaGothicE_Regular_R.otf") format("woff2");
+		font-weight: 400;
+	}
+
+	@font-face {
+		font-family: "Dharma Gothic";
+		src: url("/fonts/DharmaGothic/DharmaGothicE_Bold_R.otf") format("woff2");
+		font-weight: 500;
+	}
+
+	@font-face {
+		font-family: "Dharma Gothic";
+		src: url("/fonts/DharmaGothic/DharmaGothicE_ExBold_R.otf") format("woff2");
+		font-weight: 700;
+	}
+}

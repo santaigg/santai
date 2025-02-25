@@ -1,0 +1,22 @@
+---
+import aboutSantaiGG from "../../data/aboutSantaigg.json";
+import DeveloperCredits from "../information/DeveloperCredits.astro";
+import Logo from "./Logo.astro";
+
+interface Props {
+	hidden?: boolean;
+}
+
+const { hidden = false } = Astro.props;
+---
+
+{
+    !hidden &&
+    <div class="mt-40"></div>
+    <footer class="w-full mt-auto p-base outline outline-4 outline-offset-4 outline-accent text-center bg-accent text-xs text-dark-0 font-semibold">
+      <a class="block mb-base font-bold hover:underline" href={aboutSantaiGG.discord} target="_blank" rel="noopener">Join The Discord</a>
+      <a class="block mb-base font-bold hover:underline" href={aboutSantaiGG.wavescanDocs} target="_blank" rel="noopener">Wavescan API Docs</a>
+      <DeveloperCredits class="block mb-base" />
+      {aboutSantaiGG.affiliateNotice}
+    </footer>
+}

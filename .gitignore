@@ -1,0 +1,22 @@
+.DS_Store
+node_modules
+.turbo
+*.log
+.next
+dist
+dist-ssr
+*.local
+.env
+.cache
+server/dist
+public/dist
+
+# misc
+.references
+.specstory
+*/.specstory/*
+*/pulsefinder/**
+.old/apps/pulsefinder/*
+.old/apps/old-backend/*
+*/history/*
+

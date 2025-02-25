@@ -1,0 +1,36 @@
+---
+export const prerender = false;
+import BackgroundImage from "../../components/cosmetic/BackgroundImage.astro";
+import Constrict from "../../components/blocks/Constrict.astro";
+import Layout from "../../layouts/Layout.astro";
+import Note, { InfoType } from "../../components/information/Note.astro";
+import PlayerLeaderboardTable from "../../components/tables/PlayerLeaderboardTable.svelte";
+import { Image } from "astro:assets";
+import soloRank from "../../assets/rank-solo.svg";
+import { fetchLeaderboard } from "../../utils/fetch/fetchLeaderboard";
+import type { LeaderboardId } from "../../utils/types/leaderboard";
+
+const leaderboard = await fetchLeaderboard("season0" as LeaderboardId);
+Astro.response.headers.set('Cache-Control', 's-maxage=600, stale-while-revalidate');
+---
+
+<Layout pageTitle="Santai.GG | Player Leaderboard">
+  <main>
+    <BackgroundImage imagePath="/src/assets/background-01.png" altText="Spectre Divide - players clearing site." class="brightness-110" />
+
+    <Constrict class="mt-large mx-large gap-base">
+      <div class="flex flex-col mb-large md:flex-row">
+        <div class="flex flex-row gap-large md:flex-row">
+          <div class="mr-auto">
+            <h2 class="text-4xl text-light-1 font-dharmagothic font-light">PLAYERS</h2>
+            <h1 class="text-6xl text-light-2 font-dharmagothic">TOP 1000</h1>
+          </div>
+          <Image src={soloRank} alt="Spectre Divide solo rank icon." class="w-24" />
+        </div>
+        <Note type={InfoType.Warning} body="The leaderboard is currently being populated. Please check back later for more accurate rankings." class="mt-large md:mt-0 md:ml-auto" />
+      </div>
+
+      <PlayerLeaderboardTable client:idle playerRows={leaderboard} />
+    </Constrict>
+  </main>
+</Layout>

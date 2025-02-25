@@ -1,0 +1,25 @@
+{
+	"siteDescription": "Spectre Divide community hub, leaderboard, and stats.",
+	"affiliateNotice": "Santai.GG is not affiliated with Mountaintop Studios and all associated properties “Spectre Divide” are trademarks or registered trademarks of Mountaintop Studios.",
+	"maintenanceNotice": "Santai.GG is currently offline while we are preparing for Season 1",
+	"developers": [
+		{
+			"name": "Limited-io",
+			"alias": "Limited-io",
+			"social": "https://limitedio.com/"
+		},
+		{
+			"name": "Kadir Lofca",
+			"alias": "Haft",
+			"social": "https://www.kadirlofca.com"
+		},
+		{
+			"name": "Antiparty",
+			"alias": "Antiparty",
+			"social": "https://www.twitch.tv/antiparty"
+		}
+	],
+	"discord": "https://discord.gg/santaigg",
+	"github": "https://github.com/santaigg/santai",
+	"wavescanDocs": "https://wavescan-production.up.railway.app/api/v1/swagger"
+}

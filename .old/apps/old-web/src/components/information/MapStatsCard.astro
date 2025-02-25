@@ -1,0 +1,116 @@
+---
+import type { MapStats } from "../../utils/types/wavescan.types";
+import ExpandableCard from "./ExpandableCard.astro";
+
+// interface Map {
+// 	name: string;
+// 	image: string;
+// 	winRate: string;
+// 	kd: string;
+// 	adr: string;
+// }
+
+interface Props {
+	mapStats: { [key: string]: MapStats };
+}
+
+function getMapName(
+	map: string,
+): "Commons" | "Metro" | "Mill" | "Skyway" | "Unknown" {
+	switch (map.toLowerCase()) {
+		case "commons_p":
+			return "Commons";
+		case "metro_p":
+			return "Metro";
+		case "greenbelt_p":
+			return "Mill";
+		case "junction_p":
+			return "Skyway";
+		default:
+			return "Unknown";
+	}
+}
+
+const { mapStats } = Astro.props as Props;
+const maps = Object.values(mapStats).sort(
+	(a, b) => b.total_wins - a.total_wins,
+);
+---
+
+<ExpandableCard id="map-stats-card" title="Maps" initiallyExpanded={true} class="max-w-[24rem] mx-auto filter drop-shadow-lg">
+  <div id="map-stats-content" slot="content" class="space-y-2">
+    {maps.map((map) => (
+      <div class="flex items-center justify-between py-2">
+        <div class="flex items-center space-x-3">
+          <img src={`/images/map-previews/${getMapName(map.map)}_800x800.webp`} alt={`Image of ${getMapName(map.map)}`} class="w-12 h-12 rounded-md" />
+          <div>
+            <h3 class="text-[#f9c61f] font-bold text-sm">{getMapName(map.map)}</h3>
+            <p class="text-gray-400 text-xs">{map.average_damage_per_round.toFixed(2)} ADR</p>
+          </div>
+        </div>
+        <div class="text-right">
+          <p class="text-light-1 text-sm font-medium">{map.total_wins}W - {map.total_losses}L - {map.average_win_percentage.toFixed(0)}%</p>
+          <p class="text-gray-400 text-xs">{(map.average_kills_per_round / map.average_deaths_per_round).toFixed(2)} K/D</p>
+        </div>
+      </div>
+    ))}
+  </div>
+  <div slot="footer">
+    <!-- <button id="show-all-maps" class="w-full text-center text-light-1 py-2 text-sm font-medium">
+      Show All
+    </button> -->
+  </div>
+</ExpandableCard>
+
+
+<script>
+function getMapName(
+	map: string,
+): "Commons" | "Metro" | "Mill" | "Skyway" | "Unknown" {
+	switch (map.toLowerCase()) {
+		case "commons_p":
+			return "Commons";
+		case "metro_p":
+			return "Metro";
+		case "greenbelt_p":
+			return "Mill";
+		case "junction_p":
+			return "Skyway";
+		default:
+			return "Unknown";
+	}
+}
+
+function updateMapStats(updatedPlayerFullProfile: any) {
+  const mapStats = updatedPlayerFullProfile.extended_stats.map_stats;
+  const maps = Object.values(mapStats).sort((a: any, b: any) => b.total_rounds_played - a.total_rounds_played);
+
+  const mapStatsContainer = document.getElementById('map-stats-content');
+  if (mapStatsContainer) {
+    mapStatsContainer.innerHTML = maps.map((map: any) => `
+      <div class="flex items-center justify-between py-2">
+        <div class="flex items-center space-x-3">
+          <img src="/images/map-previews/${getMapName(map.map)}_800x800.webp" alt="Image of ${getMapName(map.map)}" class="w-12 h-12 rounded-md" />
+          <div>
+            <h3 class="text-[#f9c61f] font-bold text-sm">${getMapName(map.map)}</h3>
+            <p class="text-gray-400 text-xs">${map.average_damage_per_round.toFixed(2)} ADR</p>
+          </div>
+      </div>
+      <div class="text-right">
+        <p class="text-light-1 text-sm font-medium">${map.total_wins}W - ${map.total_losses}L - ${map.average_win_percentage.toFixed(0)}%</p>
+          <p class="text-gray-400 text-xs">${(map.average_kills_per_round / map.average_deaths_per_round).toFixed(2)} K/D</p>
+        </div>
+      </div>
+    `).join('');
+  }
+}
+
+window.addEventListener('playerDataUpdate', (event: any) => {
+  console.log("[MapStatsCard] Player data updated", event);
+  updateMapStats(event.detail);
+});
+</script>
+
+<style>
+  /* Add custom styles here if needed */
+</style>

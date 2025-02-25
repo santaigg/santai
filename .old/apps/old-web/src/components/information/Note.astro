@@ -1,0 +1,23 @@
+---
+import { cn } from "../../utils/cn";
+
+export enum InfoType {
+	Helpful,
+	Warning,
+	Destructive,
+}
+
+interface Props {
+	type: InfoType;
+	title?: string;
+	body: string;
+	class?: string;
+}
+
+const { class: className, type, body, title = "Note" } = Astro.props;
+---
+
+<div class={cn("w-full h-fit p-base border-2 rounded-base bg-dark-1 md:w-fit", type == InfoType.Helpful ? "border-light-0 text-light-0" : (type == InfoType.Warning ? "border-warning text-warning" : "border-destructive text-destructive"), className)}>
+    <h1 class="font-dharmagothic text-2xl">{title}</h1>
+    <p class="text-sm">{body}</p>
+</div>

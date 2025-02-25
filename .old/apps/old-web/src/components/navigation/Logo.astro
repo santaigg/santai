@@ -1,0 +1,28 @@
+---
+import Image from "astro/components/Image.astro";
+import santaiggLogo from "./public/santaigg-logo.svg";
+import { cn } from "../../utils/cn";
+
+interface Props {
+	class?: string;
+	dark?: boolean;
+}
+
+const { class: className, dark } = Astro.props;
+---
+
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg class={cn("group/logo w-72 duration-quick", className)} viewBox="0 0 287 62" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+        <a href="/">
+        <rect x="0" y="0" width="286.634" height="76.08" style="fill:#fff;fill-opacity:0;" />
+        <clipPath id="_clip1">
+            <rect x="0" y="0" width="286.634" height="76.08"/>
+        </clipPath>
+        <g clip-path="url(#_clip1)">
+            <g>
+                <path d="M45.6,48.48l-45.6,0l0,-10.32l35.28,0l-0,-2.4l-25.44,0l0,-17.768l5.272,-5.272l30.488,0l0,10.32l-25.44,0l0,2.4l25.44,0l0,23.04Zm102.074,-25.44l-13.754,0l-0,15.12l12.628,0l0,10.32l-17.476,0l-5.472,-5.472l-0,-43.008l10.32,0l-0,12.72l13.754,0l0,10.32Zm27.84,25.44l0,-25.44l-15.12,0l0,15.12l12.96,0l0,10.32l-23.28,0l0,-30.3l5.46,-5.46l30.3,0l0,25.44l2.16,0l0,-25.44l10.32,0l0,30.288l-5.472,5.472l-17.328,0Zm25.08,-5.472l0,-10.32l10.32,0l0,4.848l-5.472,5.472l-4.848,0Zm-2.28,-43.008l0,10.32l-10.32,0l0,-10.32l10.32,0Zm14.88,48.48l0,-30.288l5.472,-5.472l30.288,0l0,10.32l-25.44,0l0,15.12l15.12,0l0,-2.4l-12.72,0l0,-10.32l23.04,0l0,17.568l-5.472,5.472l-30.288,0Zm38.16,0l0,-30.288l5.472,-5.472l30.288,0l0,10.32l-25.44,0l0,15.12l15.12,0l0,-2.4l-12.72,0l0,-10.32l23.04,0l0,17.568l-5.472,5.472l-30.288,0Zm-178.154,0l-0,-25.44l-15.12,0l0,15.12l12.96,0l-0,10.32l-23.28,0l0,-30.3l5.46,-5.46l30.3,0l-0,25.44l2.16,0l-0,-25.44l30.3,0l5.46,5.46l-0,43.02l-10.32,0l-0,-38.16l-15.12,0l-0,19.968l-5.472,5.472l-17.328,0Z"  class={cn("duration-quick", dark ? "fill-dark-2 group-hover/logo:fill-dark-0" : "fill-light-2 group-hover/logo:fill-accent")} />
+            </g>
+        </g>
+    </a>
+</svg>

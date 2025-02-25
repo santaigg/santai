@@ -1,0 +1,20 @@
+---
+import Logo from "./Logo.astro";
+
+interface Props {
+	hidden?: boolean;
+	darkLogo?: boolean;
+}
+
+const { hidden = false, darkLogo } = Astro.props;
+---
+
+{
+    !hidden &&
+    <div class="mb-16"></div>
+    <div class="fixed top-0 z-50 w-full p-base shadow-lg bg-accent">
+      <Logo class='w-24 mx-auto md:w-32' dark />
+    </div>
+}
+
+<!-- outline outline-4 outline-offset-4 outline-accent -->

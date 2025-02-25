@@ -1,0 +1,49 @@
+---
+import "../styles/global.css";
+import aboutSantaiGG from "../data/aboutSantaigg.json";
+import { ViewTransitions } from "astro:transitions";
+import Navbar from "../components/navigation/Navbar.astro";
+import Footer from "../components/navigation/Footer.astro";
+import { cn } from "../utils/cn";
+import MaintenanceBanner from "../components/information/MaintenanceBanner.astro";
+import PostHog from '../components/posthog.astro'
+
+interface Props {
+	class?: string;
+	style?: string;
+	pageTitle: string;
+	pageDescription?: string;
+	hiddenNavbar?: boolean;
+	hiddenFooter?: boolean;
+}
+
+const {
+	class: className,
+	style,
+	pageTitle,
+	hiddenNavbar = false,
+	hiddenFooter = false,
+	pageDescription = aboutSantaiGG.siteDescription,
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="description" content={pageDescription} />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="theme-color" content="#f9c61f" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{pageTitle}</title>
+    <ViewTransitions />
+    <PostHog />
+  </head>
+  <body class={cn("flex flex-col min-h-lvh bg-dark-0", className)} style={style}>
+    <Navbar hidden={hiddenNavbar} darkLogo />
+    <MaintenanceBanner />
+    <slot />
+    <Footer hidden={hiddenFooter} />
+  </body>
+</html>

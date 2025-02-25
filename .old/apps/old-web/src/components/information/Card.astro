@@ -1,0 +1,16 @@
+---
+import { cn } from "../../utils/cn";
+
+interface Props {
+	href?: string;
+	class?: string;
+}
+
+const { href = "", class: className } = Astro.props;
+---
+
+<a href={href} class={cn("w-fit", href ? "" : "pointer-events-none")}>
+    <div class={cn("group/card p-base rounded-base rounded-tl-large rounded-br-large border-2 border-light-0 outline outline-offset-4 outline-0 outline-accent duration-quick hover:outline-2 hover:border-accent hover:bg-accent", className)}>
+        <slot />
+    </div>
+</a>

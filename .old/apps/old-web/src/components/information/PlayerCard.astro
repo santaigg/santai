@@ -1,0 +1,412 @@
+---
+import type { PlayerFullProfile } from "../../utils/types/wavescan.types";
+interface Props {
+  player: PlayerFullProfile;
+  isLoading: boolean;
+}
+const { player, isLoading }: { player: PlayerFullProfile; isLoading: boolean } = Astro.props;
+
+
+// Ensure we have valid data for the charts
+const santaiRatingChartData =
+  player?.matches
+    ?.map((match) => ({
+      date: match.match_date,
+      rank_rating: match.player_team?.players?.find((p) => p.id === player.id)?.ranked_rating || 0,
+    }))
+    .filter((data) => data.rank_rating !== 0)
+    .slice(-10)
+    .reverse() || [];
+
+const adrChartData =
+  player?.matches
+    ?.map((match) => ({
+      date: match.match_date,
+      adr: match.player_team?.players?.find((p) => p.id === player.id)?.damage_dealt ?? 0 / (match.player_team?.rounds_played ?? 1),
+    }))
+    .filter((data) => data.adr !== 0)
+    .slice(-10)
+    .reverse() || [];
+
+// Function to safely get Santai Rating
+function getSantaiRating(rankRating: number, currentSoloRank: number) {
+  if (typeof rankRating === "number" && typeof currentSoloRank === "number") {
+    return Math.floor((rankRating + currentSoloRank * 100) / 25);
+  }
+  return 0;
+}
+
+function getRankName(rankId: number): string {
+  switch (rankId) {
+    case 0:
+      return "Unranked";
+    case 1:
+      return "Bronze 1";
+    case 2:
+      return "Bronze 2";
+    case 3:
+      return "Bronze 3";
+    case 4:
+      return "Bronze 4";
+    case 5:
+      return "Silver 1";
+    case 6:
+      return "Silver 2";
+    case 7:
+      return "Silver 3";
+    case 8:
+      return "Silver 4";
+    case 9:
+      return "Gold 1";
+    case 10:
+      return "Gold 2";
+    case 11:
+      return "Gold 3";
+    case 12:
+      return "Gold 4";
+    case 13:
+      return "Platinum 1";
+    case 14:
+      return "Platinum 2";
+    case 15:
+      return "Platinum 3";
+    case 16:
+      return "Platinum 4";
+    case 17:
+      return "Emerald 1";
+    case 18:
+      return "Emerald 2";
+    case 19:
+      return "Emerald 3";
+    case 20:
+      return "Emerald 4";
+    case 21:
+      return "Ruby 1";
+    case 22:
+      return "Ruby 2";
+    case 23:
+      return "Ruby 3";
+    case 24:
+      return "Ruby 4";
+    case 25:
+      return "Diamond 1";
+    case 26:
+      return "Diamond 2";
+    case 27:
+      return "Diamond 3";
+    case 28:
+      return "Diamond 4";
+    case 29:
+      return "Champion";
+    default:
+      return "Unranked";
+  }
+}
+---
+
+<div id="player-card-container" class="container mx-auto max-w-[24rem]"> 
+	<div class="bg-[#09090b] rounded-lg overflow-hidden filter drop-shadow-lg">
+	  <div class="relative">
+		<div class="absolute top-2 left-2 flex items-center">
+		  <span class="text-yellow-400 mr-2"></span>
+		  <span id="santai-title" class="text-sm font-bold uppercase text-[#f9c61f] bg-gradient-to-r from-[#f9c61f] to-[#ffffff] bg-clip-text text-transparent">
+			{isLoading ? "Loading..." : "Santai Champion"}
+		  </span>
+		</div>
+		<div class="h-64">
+		  <div class={`w-full h-full ${isLoading ? 'animate-pulse bg-gray-300' : ''}`} id="player-avatar-container">
+			{!isLoading && <img src={player?.steam_profile?.avatar?.large || "/images/avatars/default.png"} alt="Player avatar" class="w-full h-full object-cover" />}
+		  </div>
+		  <div class="absolute inset-0 bg-gradient-to-t from-black via-black/70 to-transparent pointer-events-none"></div>
+		</div>
+		<div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-[#09090b] p-4">
+		  <h1 class="text-5xl text-light-1 font-dharmagothic font-bold mb-1 text-center">
+			{isLoading ? "Loading..." : player.name}
+		  </h1>
+		</div>
+	  </div>
+	  
+	  <div class="p-4">
+		<div class="grid grid-cols-2 gap-4 mb-4">
+		  <div class="bg-[#131315] rounded-lg p-3">
+			<h6 class="text-[#f9c61f] text-xs uppercase tracking-wider mb-1">Santai Rating</h6>
+			<div class="flex items-end justify-between">
+			  <h5 id="santai-rating" class="text-light-2 font-dharmagothic text-2xl font-bold tracking-wide">
+				{isLoading ? "..." : getSantaiRating(player?.stats?.rank_rating ?? 0, player?.stats?.current_solo_rank ?? 0)}
+			  </h5>
+			</div>
+			<div class="w-full h-8 mt-2">
+			  {isLoading ? (
+				<div class="w-full h-full bg-gray-300 animate-pulse"></div>
+			  ) : (
+				santaiRatingChartData.length > 0
+			  )}
+			</div>
+		  </div>
+		  <div class="bg-[#131315] rounded-lg p-3">
+			<h6 class="text-[#f9c61f] text-xs uppercase tracking-wider mb-1">ADR</h6>
+			<div class="flex items-end justify-between">
+			  <h5 id="adr-value" class="text-light-2 font-dharmagothic text-2xl font-bold tracking-wide">
+				{isLoading ? "..." : (player?.extended_stats?.season_stats['2024-S0']?.average_damage_per_round?.toFixed(1) || "N/A")}
+			  </h5>
+			</div>
+			<div class="w-full h-8 mt-2">
+			  {isLoading ? (
+				<div class="w-full h-full bg-gray-300 animate-pulse"></div>
+			  ) : (
+				adrChartData.length > 0
+			  )}
+			</div>
+		  </div>
+		</div>
+
+		<div class="grid grid-cols-2 gap-4">
+			<div class="bg-[#131315] rounded-lg p-4">
+			  <h6 class="text-[#f9c61f] text-sm uppercase tracking-wider mb-2">Rank</h6>
+			  <div class="flex justify-center items-center h-32">
+				<div class="text-center flex flex-col items-center">
+				  <img id="rank-icon" src={`/images/solo-ranks/${getRankName(player.stats.current_solo_rank ?? 0).replace(' ', '-')}.png`} alt="Player Rank" class="w-16 h-16" />
+				  <span id="rank-name" class="text-light-2 text-sm">Solo {getRankName(player.stats.current_solo_rank ?? 0)}</span>
+				</div>
+			  </div>
+			</div>
+			<div class="bg-[#131315] rounded-lg p-4">
+				<h6 class="text-[#f9c61f] text-sm uppercase tracking-wider mb-2">Season Stats</h6>
+				<div class="grid grid-cols-2 gap-2 sm:flex sm:flex-col sm:space-y-2">
+				  <div class="flex items-center">
+					<svg class="w-6 h-6 text-light-2 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+					  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"></path>
+					</svg>
+					<span class="text-light-2 text-xs w-20 hidden sm:inline">Win %:</span>
+					<span id="win-percentage" class="text-light-1 font-bold text-sm">
+					  {player?.extended_stats?.season_stats?.['2024-S0']?.average_win_percentage 
+						? player.extended_stats.season_stats['2024-S0'].average_win_percentage.toFixed(1)
+						: 0}%
+					</span>
+				  </div>
+				  <div class="flex items-center">
+					<svg class="w-6 h-6 text-light-2 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+					  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+					</svg>
+					<span class="text-light-2 text-xs w-20 hidden sm:inline">KDR:</span>
+					<span id="kd-ratio" class="text-light-1 font-bold text-sm">
+					  {(player?.extended_stats?.season_stats?.['2024-S0']?.total_kills && player?.extended_stats?.season_stats?.['2024-S0']?.total_deaths) 
+						? (player.extended_stats.season_stats['2024-S0'].total_kills / player.extended_stats.season_stats['2024-S0'].total_deaths).toFixed(2)
+						: 0}
+					</span>
+				  </div>
+				  <div class="flex items-center">
+					<svg class="w-6 h-6 text-light-2 mr-2" viewBox="0 0 512 512" xml:space="preserve" fill="#ffffff"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <style type="text/css">  .st0{fill:#ffffff;}  </style> <g> <path class="st0" d="M495.212,16.785c-44.125-44.141-188.297,5.875-250.078,67.656S61.79,267.8,61.79,267.8l182.406,182.407 c0,0,121.563-121.579,183.359-183.36C489.321,205.082,539.337,60.91,495.212,16.785z"></path> <polygon class="st0" points="0.009,329.597 182.399,512.004 217.712,476.691 35.306,294.285 "></polygon> </g> </g></svg>
+					<span class="text-light-2 text-xs w-20 hidden sm:inline">Top DMG:</span>
+					<span id="top-damage" class="text-light-1 font-bold text-sm">
+					  {player?.extended_stats?.season_stats?.['2024-S0']?.top_damage_dealt 
+						? player.extended_stats.season_stats['2024-S0'].top_damage_dealt 
+						: 0}
+					</span>
+				  </div>
+				  <div class="flex items-center">
+					<svg class="w-6 h-6 text-light-2 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"><path d="M5 16.6573C3.7492 15.1116 3 13.1433 3 11C3 6.02944 7.02944 3 12 3C16.9706 3 21 6.02944 21 11C21 13.1433 20.2508 15.1116 19 16.6573M5 16.6573V19C5 20.1046 5.89543 21 7 21H17C18.1046 21 19 20.1046 19 19V16.6573M5 16.6573H6.5M19 16.6573H17.5" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path><circle cx="8" cy="12" r="1" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></circle><path d="M11 16L12 14L13 16H11Z" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path><path d="M9 19V21" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path><path d="M12 19V21" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path><path d="M15 19V21" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path><circle cx="16" cy="12" r="1" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></circle></g></svg>
+					<span class="text-light-2 text-xs w-20 hidden sm:inline">Top Kills:</span>
+					<span id="top-kills" class="text-light-1 font-bold text-sm">
+					  {player?.extended_stats?.season_stats?.['2024-S0']?.top_kills 
+						? player.extended_stats.season_stats['2024-S0'].top_kills 
+						: 0}
+					</span>
+				  </div>
+				</div>
+			  </div>
+		  </div>
+	  </div>
+	</div>
+
+  <script>
+	function initializePlayerCard() {
+		window.addEventListener('playerDataUpdate', (event: any) => {
+		console.log("[PlayerCard] Player data updated", event);
+		updatePlayerCard(event.detail);
+	});
+	const playerCardContainer = document.getElementById('player-card-container');
+
+function updatePlayerCard(playerData: any) {
+    // Update relevant parts of the player card
+    const santaiRatingElement = playerCardContainer?.querySelector('#santai-rating');
+    if (santaiRatingElement) {
+      santaiRatingElement.textContent = getSantaiRating(playerData.stats.rank_rating, playerData.stats.current_solo_rank).toString();
+    } else {
+      console.warn("[PlayerCard] No santai-rating element found");
+    }
+
+    const adrElement = playerCardContainer?.querySelector('#adr-value');
+    if (adrElement) {
+      adrElement.textContent = playerData.extended_stats.season_stats['2024-S0'].average_damage_per_round.toFixed(1);
+    } else {
+      console.warn("[PlayerCard] No ADR element found");
+    }
+
+    // Update player name
+    const playerNameElement = playerCardContainer?.querySelector('.text-5xl.text-light-1.font-dharmagothic.font-bold.mb-1.text-center');
+    if (playerNameElement) {
+      playerNameElement.textContent = playerData.name;
+    } else {
+      console.warn("[PlayerCard] No player name element found");
+    }
+
+    // Update player avatar
+    const playerAvatarElement = playerCardContainer?.querySelector('#player-avatar-container');
+    if (playerAvatarElement) {
+      playerAvatarElement.innerHTML = `<img src="${playerData.steam_profile?.avatar?.large || "/images/avatars/default.png"}" alt="Player avatar" class="w-full h-full object-cover" />`;
+    } else {
+      console.warn("[PlayerCard] No player avatar element found");
+    }
+
+	const rankIconElement = playerCardContainer?.querySelector('#rank-icon') as HTMLImageElement;
+	if (rankIconElement) {
+		rankIconElement.src = `/images/solo-ranks/${getRankName(playerData.stats.current_solo_rank ?? 0).replace(' ', '-')}.png`;
+	} else {
+		console.warn("[PlayerCard] No rank-icon element found");
+	}
+
+  const rankNameElement = playerCardContainer?.querySelector('#rank-name');
+  if (rankNameElement) {
+    rankNameElement.textContent = `Solo ${getRankName(playerData.stats.current_solo_rank ?? 0)}`;
+  } else {
+    console.warn("[PlayerCard] No rank-name element found");
+  }
+
+  const winPercentageElement = playerCardContainer?.querySelector('#win-percentage');
+  if (winPercentageElement) {
+    winPercentageElement.textContent = playerData.extended_stats.season_stats['2024-S0'].average_win_percentage.toFixed(1) + '%';
+  } else {
+    console.warn("[PlayerCard] No win-percentage element found");
+  }
+
+  const kdRatioElement = playerCardContainer?.querySelector('#kd-ratio');
+  if (kdRatioElement) {
+    kdRatioElement.textContent = (playerData.extended_stats.season_stats['2024-S0'].total_kills / playerData.extended_stats.season_stats['2024-S0'].total_deaths).toFixed(2);
+  } else {
+    console.warn("[PlayerCard] No kd-ratio element found");
+  }
+
+  const topDamageElement = playerCardContainer?.querySelector('#top-damage');
+  if (topDamageElement) {
+    topDamageElement.textContent = playerData.extended_stats.season_stats['2024-S0'].top_damage_dealt;
+  } else {
+    console.warn("[PlayerCard] No top-damage element found");
+  }
+
+  const topKillsElement = playerCardContainer?.querySelector('#top-kills');
+  if (topKillsElement) {
+    topKillsElement.textContent = playerData.extended_stats.season_stats['2024-S0'].top_kills;
+  } else {
+    console.warn("[PlayerCard] No top-kills element found");
+  }
+
+    // Update Santai Champion title
+	const santaiTitleElement = playerCardContainer?.querySelector('#santai-title');
+  if (santaiTitleElement) {
+    if (playerData.stats.current_solo_rank >= 29 || playerData.stats.highest_team_rank >= 29) {
+      santaiTitleElement.textContent = "Santai Champion";
+      santaiTitleElement.classList.remove('hidden');
+    } else {
+      santaiTitleElement.classList.add('hidden');
+    }
+  } else {
+    console.warn("[PlayerCard] No santai-title element found");
+  }
+
+
+    // Remove loading classes
+    const loadingElements = playerCardContainer?.querySelectorAll('.animate-pulse, .bg-gray-300');
+    loadingElements?.forEach((element: Element) => {
+      element.classList.remove('animate-pulse', 'bg-gray-300');
+    });
+
+    // Trigger chart updates
+    window.dispatchEvent(new CustomEvent('updateCharts', { detail: playerData }));
+
+	}
+
+	function getSantaiRating(santaiRating: number, rank_id: number): number {
+		if (rank_id >= 29) {
+			// return santaiRating - 4650; // TODO: Figure out the math for calculating SR between ranks
+			return santaiRating;
+		}
+			return santaiRating;
+		}
+	}
+
+	// Ensure the initialization happens after the page has loaded
+	if (document.readyState === 'loading') {
+		document.addEventListener('DOMContentLoaded', initializePlayerCard);
+	} else {
+		initializePlayerCard();
+	}
+
+	function getRankName(rankId: number): string {
+	switch (rankId) {
+		case 0:
+			return "Unranked";
+		case 1:
+			return "Bronze 1";
+		case 2:
+			return "Bronze 2";
+		case 3:
+			return "Bronze 3";
+		case 4:
+			return "Bronze 4";
+		case 5:
+			return "Silver 1";
+		case 6:
+			return "Silver 2";
+		case 7:
+			return "Silver 3";
+		case 8:
+			return "Silver 4";
+		case 9:
+			return "Gold 1";
+		case 10:
+			return "Gold 2";
+		case 11:
+			return "Gold 3";
+		case 12:
+			return "Gold 4";
+		case 13:
+			return "Platinum 1";
+		case 14:
+			return "Platinum 2";
+		case 15:
+			return "Platinum 3";
+		case 16:
+			return "Platinum 4";
+		case 17:
+			return "Emerald 1";
+		case 18:
+			return "Emerald 2";
+		case 19:
+			return "Emerald 3";
+		case 20:
+			return "Emerald 4";
+		case 21:
+			return "Ruby 1";
+		case 22:
+			return "Ruby 2";
+		case 23:
+			return "Ruby 3";
+		case 24:
+			return "Ruby 4";
+		case 25:
+			return "Diamond 1";
+		case 26:
+			return "Diamond 2";
+		case 27:
+			return "Diamond 3";
+		case 28:
+			return "Diamond 4";
+		case 29:
+			return "Champion";
+		default:
+			return "Unranked";
+	}
+	}
+  </script>
+</div>

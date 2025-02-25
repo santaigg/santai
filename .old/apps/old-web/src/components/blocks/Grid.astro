@@ -1,0 +1,23 @@
+---
+import { cn } from "../../utils/cn";
+
+interface Props {
+	class?: string;
+	style?: string;
+	rows?: string;
+	colMin?: string;
+	colMax?: string;
+}
+
+const {
+	class: className,
+	style,
+	rows = "1",
+	colMin = "300px",
+	colMax = "1fr",
+} = Astro.props;
+---
+
+<div class={cn("grid grid-cols-[repeat(auto-fit,minmax(" + colMin + "," + colMax + "))] grid-rows-[" + rows + "] ", className)} style={style}>
+  <slot />
+</div>

@@ -1,0 +1,20 @@
+{
+  "name": "@repo/bun-test-presets",
+  "version": "0.0.0",
+  "private": true,
+  "license": "MIT",
+  "type": "module",
+  "bin": {
+    "bun-test-browser": "./bin/test-browser.js",
+    "bun-test-node": "./bin/test-node.js"
+  },
+  "files": [
+    "browser/setup-dom.ts",
+    "bin/test-browser.js",
+    "bin/test-node.js"
+  ],
+  "devDependencies": {
+    "@types/bun": "^1.2.3",
+    "happy-dom": "^12.10.3"
+  }
+}

@@ -1,0 +1,39 @@
+---
+interface Props {
+	title: string;
+	class?: string;
+	initiallyExpanded?: boolean;
+	id?: string;
+}
+
+const { title, initiallyExpanded = false, class: className, id } = Astro.props;
+---
+
+<div id={id} class={`expandable-card bg-[#09090b] rounded-lg overflow-hidden mb-4 ${className}`} data-expanded={initiallyExpanded}>
+  <div class="p-4 flex justify-between items-center">
+    <h2 class="text-[#f9c61f] text-lg font-bold">{title}</h2>
+  </div>
+  <div class="expandable-content px-4">
+    <slot name="content" />
+  </div>
+  <div class="p-4">
+    <slot name="footer" />
+  </div>
+</div>
+
+<style>
+  .expandable-card {
+    --max-height: 1000px;
+    --transition-duration: 0.3s;
+  }
+
+  .expandable-content {
+    max-height: var(--max-height);
+    overflow: hidden;
+    transition: max-height var(--transition-duration) ease-out;
+  }
+
+  .expandable-card[data-expanded="false"] .expandable-content {
+    max-height: 185px; /* Adjust this value to fit 3 rows */
+  }
+</style>

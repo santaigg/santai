@@ -1,0 +1,194 @@
+---
+export const prerender = false;
+import BackgroundImage from "../../components/cosmetic/BackgroundImage.astro";
+import Layout from "../../layouts/Layout.astro";
+import PlayerCard from "../../components/information/PlayerCard.astro";
+import SponsorStatsCard from "../../components/information/SponsorStatsCard.astro";
+import MapStatsCard from "../../components/information/MapStatsCard.astro";
+import MatchHistory from "../../components/information/MatchHistory.svelte";
+import StatusContainer from "../../components/information/StatusContainer.svelte";
+import type { MapStats, PlayerFullProfile } from "../../utils/types/wavescan.types";
+
+const { slug } = Astro.params;
+const playerId = slug;
+
+// Initialize with skeleton data
+let playerFullProfile: PlayerFullProfile = {
+  id: playerId ?? "",
+  name: "Loading...",
+  stats: {},
+  extended_stats: {
+    sponsor_stats: {},
+    map_stats: {},
+    season_stats: {},
+    last_20_matches_avg_stats: {
+      total_kills: 0,
+      total_assists: 0,
+      total_deaths: 0,
+      total_damage_dealt: 0,
+      total_wins: 0,
+      total_losses: 0,
+      total_draws: 0,
+      total_rounds_played: 0,
+      average_assists_per_round: 0,
+      average_kills_per_round: 0,
+      average_deaths_per_round: 0,
+      average_damage_per_round: 0,
+      average_win_percentage: 0,
+      top_damage_dealt: 0,
+      top_kills: 0,
+      top_assists: 0,
+      top_deaths: 0,
+    },
+  },
+  matches: Array(20).fill({ match_date: new Date().toISOString(), player_team: { players: [{ id: playerId, ranked_rating: 0, damage_dealt: 0 }], rounds_played: 1 } }),
+  steam_profile: {},
+};
+
+
+let isLoading = true;
+let isPlayerNotFound = false;
+let loadingErrorMessage = "Currently fetching your player profile... If this takes longer than 10 seconds, please refresh the page.";
+---
+
+<Layout pageTitle="Loading Player...">
+  <main class="p-4">
+    <BackgroundImage imagePath="/src/assets/background-03.jpg" altText="Spectre Divide - player aiming a revolver." />
+    <div class="max-w-screen-xl mx-auto">
+      <StatusContainer 
+        client:load 
+        {playerId} 
+        onDumpInitiated={() => {
+          (document.querySelector('status-container') as any)?.onDumpInitiated?.();
+        }}
+      />
+      <div class="flex flex-col md:flex-row md:space-x-2">
+        <div class="md:w-1/4 space-y-4 md:sticky md:top-4 md:self-start">
+          <PlayerCard player={playerFullProfile} isLoading={isLoading} />
+          <SponsorStatsCard sponsorStats={playerFullProfile?.extended_stats?.sponsor_stats ?? {}} />
+          <MapStatsCard mapStats={playerFullProfile?.extended_stats?.map_stats as { [key: string]: MapStats } ?? {}} />
+        </div>
+        <div class="md:w-3/4 mt-4 md:mt-0">
+          <MatchHistory 
+            playerFullProfile={playerFullProfile} 
+            client:only="svelte"
+            isLoading={isLoading}
+            hasError={isPlayerNotFound}
+            loadingErrorMessage={loadingErrorMessage}
+          />
+        </div>
+      </div>
+    </div>
+  </main>
+</Layout>
+
+<script define:vars={{ playerId }}>
+async function fetchPlayerData() {
+  try {
+    const response = await fetch(`https://wavescan-production.up.railway.app/api/v1/player/${playerId}/full_profile`);
+    if (!response.ok) {
+      const defaultData = createDefaultPlayerProfile(playerId);
+      window.dispatchEvent(new CustomEvent('playerDataUpdate', { detail: defaultData }));
+      return;
+    }
+    const playerData = await response.json();
+    if(playerData.error) {
+      const defaultData = createDefaultPlayerProfile(playerId);
+      window.dispatchEvent(new CustomEvent('playerDataUpdate', { detail: defaultData }));
+      return;
+    }
+    window.dispatchEvent(new CustomEvent('playerDataUpdate', { detail: playerData }));
+  } catch (error) {
+    console.error("Error fetching player data:", error);
+    const defaultData = createDefaultPlayerProfile(playerId);
+    window.dispatchEvent(new CustomEvent('playerDataUpdate', { detail: defaultData }));
+  }
+}
+
+// Helper function to create default player profile
+function createDefaultPlayerProfile(playerId) {
+  return {
+    id: playerId,
+    name: playerId,
+    stats: {
+      rank_rating: 0,
+      current_solo_rank: 0,
+    },
+    extended_stats: {
+      sponsor_stats: {},
+      map_stats: {},
+      season_stats: {
+        '2024-S0': {
+          average_damage_per_round: 0,
+          top_damage_dealt: 0,
+          average_win_percentage: 0,
+          top_kills: 0,
+          top_assists: 0,
+          top_deaths: 0,
+        }
+      },
+      last_20_matches_avg_stats: {
+        total_kills: 0,
+        total_assists: 0,
+        total_deaths: 0,
+        total_damage_dealt: 0,
+        total_wins: 0,
+        total_losses: 0,
+        total_draws: 0,
+        total_rounds_played: 0,
+        average_assists_per_round: 0,
+        average_kills_per_round: 0,
+        average_deaths_per_round: 0,
+        average_damage_per_round: 0,
+        average_win_percentage: 0,
+        top_damage_dealt: 0,
+        top_kills: 0,
+        top_assists: 0,
+        top_deaths: 0,
+      },
+    },
+    matches: [],
+    steam_profile: {},
+  };
+}
+
+// Fetch data after the page has loaded
+window.addEventListener('load', fetchPlayerData);
+</script>
+
+<script is:inline define:vars={{ playerId }}>
+  document.addEventListener('DOMContentLoaded', () => {
+    console.log("DOMContentLoaded for playerId:", playerId);
+    
+    // Socket.IO initialization
+    const socket = io('https://arcsentry-production.up.railway.app', {
+      query: { playerId }
+    });
+
+    socket.on('connect', () => {
+      console.log('Arc Sentry connection established');
+    });
+
+    socket.on('disconnect', () => {
+      console.log('Socket.IO disconnected');
+    });
+
+    socket.on('new_match_info', (updatedPlayerFullProfile) => {
+      console.log('Received new match info:', updatedPlayerFullProfile);
+      window.dispatchEvent(new CustomEvent('playerDataUpdate', { detail: updatedPlayerFullProfile }));
+    });
+
+    // Make socket available globally
+    window.emitSocketEvent = (eventName, data) => {
+      if (socket.connected) {
+        console.log("Emitting socket event:", eventName, data);
+        socket.emit(eventName, data);
+      } else {
+        console.error('Socket is not connected');
+      }
+    };
+  });
+</script>
+
+<!-- Include Socket.IO client library -->
+<script is:inline src="https://cdn.socket.io/4.3.2/socket.io.min.js"></script>
