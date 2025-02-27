@@ -1,0 +1,22 @@
+[test]
+# Use the DOM environment for tests
+environment = "dom"
+# Include all files that match this pattern
+include = ["**/*.test.ts"]
+# Exclude files from being tested
+exclude = ["node_modules/**/*"]
+
+[install]
+# Use exact versions for dependencies
+exact = true
+# Registry to use
+registry = "https://registry.npmjs.org"
+
+[install.cache]
+# Enable the global cache
+dir = ".bun-cache"
+disable = false
+
+[debug]
+# Show timings for various operations
+timings = true 
