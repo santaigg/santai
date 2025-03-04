@@ -1,6 +1,6 @@
 [build]
-builder = "NIXPACKS"
-buildCommand = "git clone --recursive $RAILWAY_GIT_REPO_URL . && bun install && bun run build"
+builder = "DOCKERFILE"
+dockerfilePath = "Dockerfile"
 
 [deploy]
 startCommand = "bun run start"
