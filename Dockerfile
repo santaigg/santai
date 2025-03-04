@@ -1,4 +1,8 @@
-FROM nixos/nix:latest
+# syntax=docker/dockerfile:1
+FROM nixos/nix:2.26.2
+
+# Enable BuildKit
+ENV DOCKER_BUILDKIT=1
 
 # Install git and other essential tools
 RUN nix-env -iA nixpkgs.git nixpkgs.bash nixpkgs.coreutils
