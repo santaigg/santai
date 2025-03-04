@@ -78,7 +78,6 @@
         "@elysiajs/cron": "^1.2.0",
         "@elysiajs/html": "^1.2.0",
         "@elysiajs/swagger": "^1.2.0",
-        "@repo/pulsefinder-types": "*",
         "@supabase/supabase-js": "^2.45.4",
         "@types/diff": "^7.0.1",
         "@upstash/qstash": "^2.7.9",

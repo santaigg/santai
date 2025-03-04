@@ -1,5 +1,5 @@
 import { AxiosInstance } from 'axios';
-import { ApiResponse, TeamData } from '@repo/pulsefinder-types';
+import { ApiResponse, GetTeamsForClientV1Response, Team } from '@repo/pulsefinder-types';
 
 /**
  * Service for interacting with team-related endpoints
@@ -16,8 +16,8 @@ export class TeamService {
    * @param teamId The ID of the team to retrieve
    * @returns Promise with the team data
    */
-  async getTeam(teamId: string): Promise<ApiResponse<TeamData>> {
-    const response = await this.client.get(`/v1/teams/${teamId}`);
+  async getTeam(teamId: string, playerId: string): Promise<ApiResponse<GetTeamsForClientV1Response>> {
+    const response = await this.client.get(`/v1/teams/${teamId}/player/${playerId}`);
     return response.data;
   }
 
@@ -26,8 +26,8 @@ export class TeamService {
    * @param teamId The ID of the team
    * @returns Promise with the team members
    */
-  async getTeamMembers(teamId: string): Promise<ApiResponse<any>> {
-    const response = await this.client.get(`/v1/teams/${teamId}/members`);
+  async getTeamMembers(teamId: string, playerId: string): Promise<ApiResponse<Team>> {
+    const response = await this.client.get(`/v1/teams/${teamId}/player/${playerId}/members`);
     return response.data;
   }
 
@@ -36,8 +36,8 @@ export class TeamService {
    * @param teamId The ID of the team
    * @returns Promise with the team stats
    */
-  async getTeamStats(teamId: string): Promise<ApiResponse<any>> {
-    const response = await this.client.get(`/v1/teams/${teamId}/stats`);
+  async getTeamStats(teamId: string, playerId: string): Promise<ApiResponse<any>> {
+    const response = await this.client.get(`/v1/teams/${teamId}/player/${playerId}/stats`);
     return response.data;
   }
 
@@ -46,7 +46,7 @@ export class TeamService {
    * @param playerIds Array of player IDs to get teams for
    * @returns Promise with the teams for the players
    */
-  async getTeamsForPlayers(playerIds: string[]): Promise<ApiResponse<any>> {
+  async getTeamsForPlayers(playerIds: string[]): Promise<ApiResponse<GetTeamsForClientV1Response>> {
     const response = await this.client.post('/v1/teams/by-players', {
       playerIds
     });
