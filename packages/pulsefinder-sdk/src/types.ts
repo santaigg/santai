@@ -1,125 +1,237 @@
 /**
- * PulseFinder SDK Types
- * For internal use within the monorepo
+ * Authentication configuration for the PulseFinder SDK
  */
-
-// Authentication types
 export interface AuthConfig {
+  /**
+   * API key for authentication
+   * If not provided, will use PULSEFINDER_API_KEY environment variable
+   */
   apiKey?: string;
+  
+  /**
+   * Base URL for the PulseFinder API
+   * If not provided, will use PULSEFINDER_API_URL environment variable or default to http://localhost:3000
+   */
   baseUrl?: string;
 }
 
-export interface AuthResponse {
-  token: string;
-  expiresAt: number;
-}
-
-// API Response types
-export interface ApiResponse<T> {
-  success: boolean;
-  message?: string;
-  data?: T;
-}
-
-// Player types
-export enum Platform {
-  DISCORD = "discord",
-  STEAM = "steam",
-  TWITCH = "twitch"
-}
-
-export interface SearchByPlatformRequest {
-  platform: Platform;
-  accountId: string;
-}
-
-export interface PlayerProfile {
-  playerId: string;
-  displayName: string;
-  avatarUrl?: string;
-  level?: number;
-  createdAt?: string;
-  lastSeenAt?: string;
-  // Add other player profile fields as needed
-}
-
-export interface BulkProfileRequest {
-  playerIds: string[];
-}
-
-// Match types
-export interface MatchHistoryRequest {
-  matchId: string;
-}
-
-export interface PlayerMatchHistoryRequest {
-  playerId: string;
-  startIndex?: number;
-  count?: number;
-}
-
-export interface TeamMatchHistoryRequest {
-  teamId: string;
-  startIndex?: number;
-  count?: number;
-}
-
-export interface MatchPlayer {
-  playerId: string;
-  numKills: number;
-  numDeaths: number;
-  numAssists: number;
-  totalDamageDone: number;
-  crewId?: string;
-  divisionId?: string;
-}
-
-export interface MatchTeam {
-  teamIndex: number;
-  roundsWon: number;
-  roundsPlayed: number;
-  currentRankId?: number;
-  previousRankId?: number;
-  currentRankedRating?: number;
-  previousRankedRating?: number;
-  rankedRatingDelta?: number;
-  players: MatchPlayer[];
-}
-
-export interface Match {
-  matchId: string;
-  queueName: string;
-  queueGameMode: string;
-  queueGameMap: string;
-  region: string;
-  isRanked: boolean;
-  isAbandonedMatch: boolean;
-  surrenderedTeam?: number;
-  matchDate: string;
-  teams: MatchTeam[];
-}
-
-// Error types
-export class PulseFinderError extends Error {
-  statusCode?: number;
-  
-  constructor(message: string, statusCode?: number) {
+/**
+ * Authentication error
+ */
+export class AuthenticationError extends Error {
+  constructor(message: string) {
     super(message);
-    this.name = 'PulseFinderError';
-    this.statusCode = statusCode;
-  }
-}
-
-export class AuthenticationError extends PulseFinderError {
-  constructor(message: string = 'Authentication failed') {
-    super(message, 401);
     this.name = 'AuthenticationError';
   }
 }
 
-export class NotFoundError extends PulseFinderError {
-  constructor(message: string = 'Resource not found') {
-    super(message, 404);
-    this.name = 'NotFoundError';
-  }
+/**
+ * Response format for API calls
+ */
+export interface ApiResponse<T> {
+  success: boolean;
+  data?: T;
+  error?: string;
+}
+
+/**
+ * Player profile
+ */
+export interface PlayerProfile {
+  id: string;
+  name: string;
+  discriminator?: string;
+  crewId?: string;
+  banner?: {
+    itemInstanceId: string;
+    itemType: string;
+    alterationData?: any;
+    attachmentItemInstanceId?: string;
+    itemCatalogId?: string;
+    attachmentItemCatalogId?: string;
+  };
+  stats?: {
+    currentSoloRank?: number;
+    highestTeamRank?: number;
+    rankRating?: number;
+    lastUpdatedRankRating?: string;
+  };
+  socialConnections?: {
+    discord?: string;
+    steam?: string;
+    twitch?: string;
+  };
+}
+
+/**
+ * Match data
+ */
+export interface MatchData {
+  matchId: string;
+  queueName: string;
+  queueGameMode: string;
+  queueGameMap: string;
+  overtimeType: string;
+  region: string;
+  bIsRanked: boolean;
+  bIsAbandonedMatch: boolean;
+  abandonedPlayerIds: string[];
+  surrenderedTeam: number;
+  teamData: MatchTeamData[];
+}
+
+/**
+ * Match team data
+ */
+export interface MatchTeamData {
+  roundsPlayed: number;
+  roundsWon: number;
+  xpPerRound: number;
+  xpPerRoundWon: number;
+  teamId: string;
+  currentRankId: number;
+  previousRankId: number;
+  currentRankedRating: number;
+  previousRankedRating: number;
+  rankedRatingDelta: number;
+  matchPlacementData: string[];
+  numRankedMatches: number;
+  fansPerRound: number;
+  fansPerRoundWon: number;
+  playerData: MatchPlayerData[];
+  bUsedTeamRank: boolean;
+  bIsFullTeamInParty: boolean;
+}
+
+/**
+ * Match player data
+ */
+export interface MatchPlayerData {
+  playerId: string;
+  nativePlatformId: string;
+  savedPlayerName: string;
+  selectedBannerCatalogId: string;
+  savedSponsorName: string;
+  selectedSponsor: {
+    tagName: string;
+  };
+  isAnonymousPlayer: boolean;
+  hasCrewScoreEarned: boolean;
+  teammateIndex: number;
+  numKills: number;
+  numAssists: number;
+  numDeaths: number;
+  totalDamageDone: number;
+  currentRankId: number;
+  previousRankId: number;
+  currentRankedRating: number;
+  previousRankedRating: number;
+  rankedRatingDelta: number;
+  crewScore: number;
+  crewId: string;
+  divisionId: string;
+  divisionType: number;
+  matchPlacementData: string[];
+  numRankedMatches: number;
+}
+
+/**
+ * Team data
+ */
+export interface TeamData {
+  id: string;
+  name: string;
+  teamSize: number;
+  createdDate: string;
+  updatedDate: string;
+  lastPlayed?: string;
+  members: TeamMember[];
+  stats?: TeamStats;
+}
+
+/**
+ * Team member data
+ */
+export interface TeamMember {
+  playerId: string;
+  playerName?: string;
+}
+
+/**
+ * Team stats data
+ */
+export interface TeamStats {
+  casualMmr?: number;
+  rankedMmr?: number;
+  teamRankPoints?: number;
+  casualMatchesPlayedCount?: number;
+  rankedMatchesPlayedCount?: number;
+  casualMatchesPlayedSeasonCount?: number;
+  rankedMatchesPlayedSeasonCount?: number;
+  currentTeamRank?: number;
+}
+
+/**
+ * Crew data
+ */
+export interface CrewData {
+  id: string;
+  name: string;
+  tag: string;
+  description?: string;
+  createdDate: string;
+  updatedDate: string;
+  members: CrewMember[];
+  stats?: CrewStats;
+}
+
+/**
+ * Crew member data
+ */
+export interface CrewMember {
+  playerId: string;
+  playerName?: string;
+  role: 'owner' | 'admin' | 'member';
+  joinedDate: string;
+}
+
+/**
+ * Crew stats data
+ */
+export interface CrewStats {
+  memberCount: number;
+  totalWins?: number;
+  totalMatches?: number;
+}
+
+/**
+ * Division data
+ */
+export interface DivisionData {
+  id: string;
+  name: string;
+  description?: string;
+  createdDate: string;
+  updatedDate: string;
+  members: DivisionMember[];
+  stats?: DivisionStats;
+}
+
+/**
+ * Division member data
+ */
+export interface DivisionMember {
+  playerId: string;
+  playerName?: string;
+  role: 'owner' | 'admin' | 'member';
+  joinedDate: string;
+}
+
+/**
+ * Division stats data
+ */
+export interface DivisionStats {
+  memberCount: number;
+  totalWins?: number;
+  totalMatches?: number;
 } 
