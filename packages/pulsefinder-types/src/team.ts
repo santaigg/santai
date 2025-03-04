@@ -50,13 +50,10 @@ export interface MtnTeamServiceRpcRequest {
  * RPC response wrapper
  */
 export interface MtnTeamServiceRpcResponse {
-  success: boolean;
-  data: {
     sequenceNumber: number;
     response: {
-      requestId: number;
-      type: string;
-      payload: GetTeamsForClientV1Response;
+        requestId: number;
+        type: string;
+        payload: GetTeamsForClientV1Response;
     }
-  }
 }
