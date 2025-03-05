@@ -24,36 +24,24 @@ export class MatchService {
   /**
    * Get match history for a player
    * @param playerId The ID of the player
-   * @param startIndex Optional starting index for pagination
-   * @param count Optional number of matches to retrieve
    * @returns Promise with the player's match history
    */
   async getPlayerMatchHistory(
-    playerId: string, 
-    startIndex: number = 0, 
-    count: number = 20
+    playerId: string
   ): Promise<ApiResponse<MatchData[]>> {
-    const response = await this.client.get(`/v1/matches/player/${playerId}`, {
-      params: { startIndex, count }
-    });
+    const response = await this.client.get(`/v1/matches/player/${playerId}`);
     return response.data;
   }
 
   /**
    * Get match history for a team
    * @param teamId The ID of the team
-   * @param startIndex Optional starting index for pagination
-   * @param count Optional number of matches to retrieve
    * @returns Promise with the team's match history
    */
   async getTeamMatchHistory(
-    teamId: string,
-    startIndex: number = 0,
-    count: number = 20
+    teamId: string
   ): Promise<ApiResponse<MatchData[]>> {
-    const response = await this.client.get(`/v1/matches/team/${teamId}`, {
-      params: { startIndex, count }
-    });
+    const response = await this.client.get(`/v1/matches/team/${teamId}`);
     return response.data;
   }
 

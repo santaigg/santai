@@ -14,10 +14,11 @@ export class TeamService {
   /**
    * Get team information
    * @param teamId The ID of the team to retrieve
+   * @param playerId The ID of a player in the team
    * @returns Promise with the team data
    */
-  async getTeam(teamId: string, playerId: string): Promise<ApiResponse<GetTeamsForClientV1Response>> {
-    const response = await this.client.get(`/v1/teams/${teamId}/player/${playerId}`);
+  async getTeam(teamId: string, playerId: string): Promise<ApiResponse<Team>> {
+    const response = await this.client.get(`/v1/teams/${teamId}/${playerId}`);
     return response.data;
   }
 
@@ -26,18 +27,18 @@ export class TeamService {
    * @param teamId The ID of the team
    * @returns Promise with the team members
    */
-  async getTeamMembers(teamId: string, playerId: string): Promise<ApiResponse<Team>> {
-    const response = await this.client.get(`/v1/teams/${teamId}/player/${playerId}/members`);
+  async getTeamMembers(teamId: string): Promise<ApiResponse<GetTeamsForClientV1Response>> {
+    const response = await this.client.get(`/v1/teams/${teamId}/members`);
     return response.data;
   }
 
   /**
    * Get team stats
-   * @param teamId The ID of the team
+   * @param playerId The ID of a player to get team stats for
    * @returns Promise with the team stats
    */
-  async getTeamStats(teamId: string, playerId: string): Promise<ApiResponse<any>> {
-    const response = await this.client.get(`/v1/teams/${teamId}/player/${playerId}/stats`);
+  async getTeamStats(playerId: string): Promise<ApiResponse<GetTeamsForClientV1Response>> {
+    const response = await this.client.get(`/v1/teams/${playerId}/stats`);
     return response.data;
   }
 

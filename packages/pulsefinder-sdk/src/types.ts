@@ -234,4 +234,22 @@ export interface DivisionStats {
   memberCount: number;
   totalWins?: number;
   totalMatches?: number;
-} 
+}
+
+// Re-export team types from pulsefinder-types
+export type { 
+  Team, 
+  GetTeamsForClientV1Request, 
+  GetTeamsForClientV1Response,
+  MtnTeamServiceRpcRequest,
+  MtnTeamServiceRpcResponse
+} from '@repo/pulsefinder-types';
+
+// Re-export match types from pulsefinder-types
+export type {
+  MatchHistoryRequest,
+  PlayerMatchHistoryRequest,
+  TeamMatchHistoryRequest,
+  GetMatchHistoryByMatchIdClientV1Response,
+  GetMatchHistoryByTeamClientV1Response
+} from '@repo/pulsefinder-types';

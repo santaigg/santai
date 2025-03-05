@@ -95,6 +95,36 @@ export interface TeamMatchHistoryRequest {
   count?: number;
 }
 
+export interface GetMatchHistoryByMatchIdClientV1Response {
+  sequenceNumber: number;
+  response: {
+    requestId: number;
+    type: string
+    payload: {
+      matchData: {
+        matchId: string;
+        matchData: string;
+        matchDate: string;
+      }
+    }
+  }
+}
+
+export interface GetMatchHistoryByTeamClientV1Response {
+  sequenceNumber: number;
+  response: {
+    requestId: number;
+    type: string;
+    payload: {
+      matchData: {
+        matchId: string;
+        matchData: string;
+        matchDate: string;
+      }[]
+    }
+  }
+}
+
 /**
  * Match history response
  */
