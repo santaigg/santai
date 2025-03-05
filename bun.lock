@@ -33,6 +33,7 @@
       "dependencies": {
         "@elysiajs/cors": "^1.2.0",
         "@elysiajs/swagger": "^1.2.2",
+        "@repo/database": "*",
         "@repo/logger": "*",
         "@repo/pulsefinder-sdk": "*",
         "@trigger.dev/sdk": "3.3.16",

@@ -15,6 +15,7 @@
     "@elysiajs/swagger": "^1.2.2",
     "@repo/logger": "*",
     "@repo/pulsefinder-sdk": "*",
+    "@repo/database": "*",
     "@trigger.dev/sdk": "3.3.16",
     "elysia": "latest",
     "zod": "^3.22.4"
