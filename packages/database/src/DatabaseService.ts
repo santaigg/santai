@@ -1066,12 +1066,27 @@ export class DatabaseService {
   async insertRawMatch(id: string, match: MatchData, date?: string) {
     console.log(`Inserting/updating match ${id} into database`);
     try {
+      // Convert Unix timestamp (if provided) to ISO string
+      let createdAt: string;
+      if (date) {
+        // If date is a Unix timestamp (milliseconds)
+        const timestamp = parseInt(date);
+        if (!isNaN(timestamp)) {
+          createdAt = new Date(timestamp).toISOString();
+        } else {
+          // If it's already an ISO string or other format
+          createdAt = date;
+        }
+      } else {
+        createdAt = new Date().toISOString();
+      }
+      
       // Log the structure of the data being inserted
       console.log(`Match data structure:`, {
         id,
         matchDataType: typeof match,
         hasMatchId: !!match?.matchId,
-        keys: Object.keys(match || {})
+        createdAt
       });
       
       // Use upsert instead of insert to handle existing records
@@ -1080,7 +1095,7 @@ export class DatabaseService {
         .upsert([{
           id: id,
           match_data: match as unknown as any,
-          created_at: date ? new Date(date).toISOString() : new Date().toISOString()
+          created_at: createdAt
         }], {
           onConflict: 'id',  // Specify the conflict column
           ignoreDuplicates: false  // Update the record if it exists
