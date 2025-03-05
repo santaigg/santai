@@ -116,7 +116,7 @@ export interface PlayerIdentity {
     discriminator: string;
   };
   idProviderAccounts: ProviderAccount[];
-  pragmaSocialId: string;
+  pragmaSocialId?: string;
 }
 
 export interface ProviderAccount {
@@ -126,4 +126,20 @@ export interface ProviderAccount {
     displayName: string;
     discriminator: string;
   };
+}
+
+export interface GetPlayerIdentitiesV1Request {
+  gameShardId: string;
+  playerIds: string[];
+}
+
+export interface GetPlayerIdentitiesV1Response {
+  sequenceNumber: number;
+  response: {
+    requestId: number;
+    type: string;
+    payload: {
+      playerIdentities: PlayerIdentity[];
+    };
+  }
 }

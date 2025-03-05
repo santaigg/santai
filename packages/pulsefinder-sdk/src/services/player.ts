@@ -37,25 +37,25 @@ export class PlayerService {
     return response.data;
   }
 
-  /**
-   * Get player stats
-   * @param playerId The ID of the player
-   * @returns Promise with the player stats
-   */
-  async getPlayerStats(playerId: string): Promise<ApiResponse<any>> {
-    const response = await this.client.get(`/v1/players/${playerId}/stats`);
-    return response.data;
-  }
-
   // /**
-  //  * Get player social connections (Discord, Steam, Twitch, etc.)
+  //  * Get player stats
   //  * @param playerId The ID of the player
-  //  * @returns Promise with the player's social connections
+  //  * @returns Promise with the player stats
   //  */
-  // async getSocialConnections(playerId: string): Promise<ApiResponse<any>> {
-  //   const response = await this.client.get(`/v1/players/${playerId}/social-connections`);
+  // async getPlayerStats(playerId: string): Promise<ApiResponse<any>> {
+  //   const response = await this.client.get(`/v1/players/${playerId}/stats`);
   //   return response.data;
   // }
+
+  /**
+   * Get player social connections (Discord, Steam, Twitch, etc.)
+   * @param playerId The ID of the player
+   * @returns Promise with the player's social connections
+   */
+  async getSocialConnections(playerId: string): Promise<ApiResponse<PlayerIdentity>> {
+    const response = await this.client.get(`/v1/players/${playerId}/social-connections`);
+    return response.data;
+  }
 
   // /**
   //  * Get player teams
