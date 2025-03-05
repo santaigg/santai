@@ -1,5 +1,5 @@
 import { AxiosInstance } from 'axios';
-import { ApiResponse, MatchData } from '@repo/pulsefinder-types';
+import { ApiResponse, MatchData, PulsefinderMatchResponse } from '@repo/pulsefinder-types';
 
 /**
  * Service for interacting with match-related endpoints
@@ -16,7 +16,7 @@ export class MatchService {
    * @param matchId The ID of the match to retrieve
    * @returns Promise with the match data
    */
-  async getMatch(matchId: string): Promise<ApiResponse<MatchData>> {
+  async getMatch(matchId: string): Promise<ApiResponse<PulsefinderMatchResponse>> {
     const response = await this.client.get(`/v1/matches/${matchId}`);
     return response.data;
   }
@@ -40,7 +40,7 @@ export class MatchService {
    */
   async getTeamMatchHistory(
     teamId: string
-  ): Promise<ApiResponse<MatchData[]>> {
+  ): Promise<ApiResponse<PulsefinderMatchResponse[]>> {
     const response = await this.client.get(`/v1/matches/team/${teamId}`);
     return response.data;
   }

@@ -1,42 +1,3 @@
-/**
- * Match data response from the game API
- */
-export interface MatchData {
-  matchId: string;
-  queueName: string;
-  queueGameMode: string;
-  queueGameMap: string;
-  overtimeType: string;
-  region: string;
-  bIsRanked: boolean;
-  bIsAbandonedMatch: boolean;
-  abandonedPlayerIds: string[];
-  surrenderedTeam: number;
-  teamData: MatchTeamData[];
-}
-
-/**
- * Match team data
- */
-export interface MatchTeamData {
-  roundsPlayed: number;
-  roundsWon: number;
-  xpPerRound: number;
-  xpPerRoundWon: number;
-  teamId: string;
-  currentRankId: number;
-  previousRankId: number;
-  currentRankedRating: number;
-  previousRankedRating: number;
-  rankedRatingDelta: number;
-  matchPlacementData: string[];
-  numRankedMatches: number;
-  fansPerRound: number;
-  fansPerRoundWon: number;
-  playerData: MatchPlayerData[];
-  bUsedTeamRank: boolean;
-  bIsFullTeamInParty: boolean;
-}
 
 /**
  * Match player data
@@ -108,6 +69,12 @@ export interface GetMatchHistoryByMatchIdClientV1Response {
       }
     }
   }
+}
+
+export interface PulsefinderMatchResponse {
+  id: string;
+  date: string;
+  matchData: MatchData;
 }
 
 export interface GetMatchHistoryByTeamClientV1Response {

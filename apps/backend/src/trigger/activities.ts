@@ -1,4 +1,4 @@
-import { PulseFinder } from '@repo/pulsefinder-sdk';
+import PulseFinder from '@repo/pulsefinder-sdk';
 import { logger } from "@trigger.dev/sdk/v3";
 import type {
   DumpPlayerActivityInput,
@@ -12,6 +12,11 @@ import type {
   DumpResult
 } from './interfaces';
 import { crewDumpTask, divisionDumpTask, teamDumpTask, matchDumpTask, playerDumpTask } from './tasks';
+import { PlayerIdentity } from '@repo/pulsefinder-types';
+// Import the database client and types
+import { DatabaseService } from '@repo/database';
+// Import types from database package
+// import type { Player, PlayerStats, PlayerAccount } from '@repo/database';
 
 // Initialize the PulseFinder SDK
 const pulsefinder = new PulseFinder({
@@ -28,29 +33,79 @@ export async function dumpPlayerActivity(input: DumpPlayerActivityInput): Promis
     logger.log(`Dumping player data for player ID: ${playerId}`);
     
     // Fetch player profile using the SDK
-    const playerResponse = await pulsefinder.player.getById(playerId);
+    const playerResponse = await pulsefinder.player.getBulkProfiles([playerId]);
     
-    // In a real implementation, you might store this data in a database
-    logger.log(`Successfully dumped player data for player ${playerId}`);
+    if(!playerResponse.data || playerResponse.data.length === 0) {
+      logger.error(`No player data found for player ${playerId}`);
+      return {
+        success: false,
+        entityId: playerId,
+        entityType: 'player',
+        error: 'No player data found',
+        timestamp: new Date().toISOString()
+      };
+    }
     
-    // Check if player has a crew and trigger crew dump if present
-    // Using type assertion since we know the structure from the old backend
-    const playerData = playerResponse as any;
+    const playerData = playerResponse.data[0]
+    const playerIdentityResponse = await pulsefinder.player.getSocialConnections(playerId);
+    let playerIdentity: PlayerIdentity | undefined;
+    if(playerIdentityResponse.data) {
+      playerIdentity = playerIdentityResponse.data
+    }
     if (playerData.crewId) {
       logger.log(`Player ${playerId} belongs to crew ${playerData.crewId}, triggering crew dump`);
-      await crewDumpTask.trigger({ crewId: playerData.crewId });
+      await crewDumpTask.triggerAndWait({ crewId: playerData.crewId });
     }
+
+    // Dump Data to Database
+    const db = new DatabaseService(process.env.SUPABASE_URL!, process.env.SUPABASE_ANON_KEY!);
     
-    // Check if player has teams and trigger team dumps
-    if (playerData.teams && Array.isArray(playerData.teams) && playerData.teams.length > 0) {
-      for (const team of playerData.teams) {
-        logger.log(`Player ${playerId} belongs to team ${team.id}, triggering team dump`);
-        await teamDumpTask.trigger({ 
-          teamId: team.id,
-          playerIds: team.members?.map((member: any) => member.playerId) || []
-        });
-      }
-    }
+    // Create player object from API data
+    const player = {
+      id: playerData.playerId,
+      displayName: playerData.displayName.displayName || '',
+      discriminator: playerData.displayName.discriminator || '',
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      
+      // Add crew if available
+      crew: playerData.crewId ? {
+        id: playerData.crewId,
+        name: playerData.crewName || 'Unknown Crew',
+        homeTurf: playerData.crewHomeTurf || null,
+        totalScore: playerData.crewTotalScore || 0,
+        divisionId: playerData.crewDivisionId || null
+      } : null,
+      
+      // Add stats if available
+      stats: {
+        currentSoloRank: playerData.currentSoloRank || 0,
+        highestTeamRank: playerData.highestTeamRank || 0,
+        rankRating: playerData.rankRating || null,
+        lastUpdatedRankRating: playerData.lastUpdatedRankRating ? new Date(playerData.lastUpdatedRankRating) : null
+      },
+      
+      // Add banner if available
+      banner: playerData.banner ? {
+        itemInstanceId: playerData.banner.itemInstanceId || '',
+        itemCatalogId: playerData.banner.itemCatalogId || null,
+        itemType: playerData.banner.itemType || 'unknown',
+        alterationData: playerData.banner.alterationData || null,
+        attachmentItemInstanceId: playerData.banner.attachmentItemInstanceId || null,
+        attachmentItemCatalogId: playerData.banner.attachmentItemCatalogId || null
+      } : null,
+      
+      // Add accounts if available
+      accounts: playerIdentity ? playerIdentity.connections.map((connection: any) => ({
+        id: `${playerId}-${connection.providerType}`,
+        accountId: connection.accountId,
+        displayName: connection.displayName || playerData.displayName || '',
+        providerType: connection.providerType
+      })) : []
+    };
+    
+    // Upsert player to database
+    await (db as any).upsertPlayer(player);
     
     return {
       success: true,
@@ -81,29 +136,41 @@ export async function dumpCrewActivity(input: DumpCrewActivityInput): Promise<Du
     
     // Fetch crew data using the SDK
     const crewResponse = await pulsefinder.crew.getCrew(crewId);
-    
-    // In a real implementation, you might store this data in a database
-    logger.log(`Successfully dumped crew data for crew ${crewId}`);
-    
-    // Using type assertion since we know the structure from the old backend
-    const crewData = crewResponse as any;
-    
+
+    if(!crewResponse.data) {
+      logger.error(`No crew data found for crew ${crewId}`);
+      return {
+        success: false,
+        entityId: crewId,
+        entityType: 'crew',
+        error: 'No crew data found',
+        timestamp: new Date().toISOString()
+      };
+    }
+
+    const crewData = crewResponse.data;
+
+    const divisionResponse = await pulsefinder.division.getCrewDivision(crewId);
+    if(!divisionResponse.data) {
+      logger.error(`No division data found for crew ${crewId}`);
+      return {
+        success: false,
+        entityId: crewId,
+        entityType: 'crew',
+        error: 'No division data found',
+        timestamp: new Date().toISOString()
+      };
+    }
+
+    const divisionData = divisionResponse.data; 
     // Check if crew has a division and trigger division dump
-    if (crewData.divisionId) {
-      logger.log(`Crew ${crewId} belongs to division ${crewData.divisionId}, triggering division dump`);
-      await divisionDumpTask.trigger({ divisionId: crewData.divisionId });
+    if (divisionData) {
+      logger.log(`Crew ${crewId} belongs to division ${divisionData.divisionId}, triggering division dump`);
+      await divisionDumpTask.triggerAndWait({ divisionId: divisionData.divisionId });
     }
-    
-    // If crew has members, trigger player dumps for each member
-    if (crewData.members && Array.isArray(crewData.members) && crewData.members.length > 0) {
-      for (const member of crewData.members) {
-        if (member.playerId) {
-          logger.log(`Processing crew member: ${member.playerId}`);
-          // We don't await this to avoid long-running tasks
-          playerDumpTask.trigger({ playerId: member.playerId });
-        }
-      }
-    }
+
+
+    // TODO: Dump Data to Database
     
     return {
       success: true,
@@ -232,34 +299,26 @@ export async function dumpMatchActivity(input: DumpMatchActivityInput): Promise<
     logger.log(`Dumping match data for match ID: ${matchId}`);
     
     // Fetch match data using the SDK
-    const matchResponse = await pulsefinder.match.getMatch(matchId);
+    const matchResponse = await (pulsefinder.match as any).getMatchDetails(matchId);
     
-    // In a real implementation, you might store this data in a database
-    logger.log(`Successfully dumped match data for match ${matchId}`);
-    
-    // Using type assertion since we know the structure from the old backend
-    const matchData = matchResponse as any;
-    
-    // If match has teams, trigger team dumps
-    if (matchData.teams && Array.isArray(matchData.teams) && matchData.teams.length > 0) {
-      for (const team of matchData.teams) {
-        logger.log(`Processing match team: ${team.id}`);
-        // We don't await this to avoid long-running tasks
-        teamDumpTask.trigger({ 
-          teamId: team.id,
-          playerIds: team.members?.map((member: any) => member.playerId) || []
-        });
-      }
+    if (!matchResponse.data) {
+      logger.error(`No match data found for match ${matchId}`);
+      return {
+        success: false,
+        entityId: matchId,
+        entityType: 'match',
+        error: 'No match data found',
+        timestamp: new Date().toISOString()
+      };
     }
     
-    // If match has players, trigger player dumps
-    if (matchData.players && Array.isArray(matchData.players) && matchData.players.length > 0) {
-      for (const player of matchData.players) {
-        logger.log(`Processing match player: ${player.id}`);
-        // We don't await this to avoid long-running tasks
-        playerDumpTask.trigger({ playerId: player.id });
-      }
-    }
+    const matchData = matchResponse.data as any;
+    
+    // Dump Data to Database
+    const db = new DatabaseService(process.env.SUPABASE_URL!, process.env.SUPABASE_ANON_KEY!);
+    
+    // Process the match dump with all related entities
+    await (db as any).processMatchDump(matchData);
     
     return {
       success: true,
