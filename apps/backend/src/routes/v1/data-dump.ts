@@ -145,8 +145,34 @@ export const dataDumpRouter = new Elysia({ prefix: '/data-dump' })
         return { error: 'No match data found' };
       }
       const matchResponse = match.data;
-      await db.insertRawMatch(matchResponse.id, JSON.stringify(matchResponse.matchData));
-      return { success: true, match };
+      console.log('id', matchResponse.id, 'matchResponse', JSON.stringify(matchResponse.matchData));
+      try {
+        await db.insertRawMatch(matchResponse.id, matchResponse.matchData);
+        return { success: true, match };
+      } catch (error: any) {
+        console.error('Error inserting match:', error);
+        
+        // Extract more detailed error information
+        const errorDetails = {
+          name: error.name,
+          message: error.message,
+          cause: error.cause ? {
+            name: error.cause.name,
+            message: error.cause.message,
+            code: error.cause.code,
+            details: error.cause.details,
+            hint: error.cause.hint
+          } : 'No cause'
+        };
+        
+        console.error('Detailed error:', JSON.stringify(errorDetails, null, 2));
+        
+        return { 
+          success: false, 
+          error: `Failed to insert match: ${error.message}`,
+          details: JSON.stringify(errorDetails)
+        };
+      }
     }
     if (teamId) {
       const team = await pulsefinder.match.getTeamMatchHistory(teamId);
@@ -157,7 +183,12 @@ export const dataDumpRouter = new Elysia({ prefix: '/data-dump' })
       // for each match in teamData, insert the match data
       for (const matchResponse of matchResponses) {
         if(matchResponse.matchData) {
-          await db.insertRawMatch(matchResponse.id, JSON.stringify(matchResponse.matchData));
+          try {
+            await db.insertRawMatch(matchResponse.id, matchResponse.matchData);
+          } catch (error: any) {
+            console.error(`Error inserting match ${matchResponse.id}:`, error);
+            console.error('Details:', error.cause ? JSON.stringify(error.cause) : 'No additional details');
+          }
         } else {
           console.error(`No match data found for match ${matchResponse.id}`);
         }
@@ -178,7 +209,12 @@ export const dataDumpRouter = new Elysia({ prefix: '/data-dump' })
           }
           const matchResponses = teamData.data;
           for (const matchResponse of matchResponses) {
-            await db.insertRawMatch(matchResponse.id, JSON.stringify(matchResponse.matchData));
+            try {
+              await db.insertRawMatch(matchResponse.id, matchResponse.matchData);
+            } catch (error: any) {
+              console.error(`Error inserting match ${matchResponse.id}:`, error);
+              console.error('Details:', error.cause ? JSON.stringify(error.cause) : 'No additional details');
+            }
           }
         }
       }

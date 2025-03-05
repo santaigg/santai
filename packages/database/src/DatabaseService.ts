@@ -6,6 +6,7 @@ import {
   MatchTeam, Match 
 } from './models'
 import { randomUUID } from 'crypto'
+import type { MatchData } from '@repo/pulsefinder-types'
 
 export class DatabaseService {
   private client: SupabaseClient<Database>
@@ -1062,15 +1063,60 @@ export class DatabaseService {
     return uniqueTeams.length;
   }
 
-  async insertRawMatch(id: string, match: string) {
-    const { data, error } = await this.client.from('spectre_match_json').insert({
-      id,
-      match_data: match
-    }).select();
-    if (error) {
-      throw new DatabaseError('Failed to insert match', { cause: error });
+  async insertRawMatch(id: string, match: MatchData) {
+    console.log(`Inserting/updating match ${id} into database`);
+    try {
+      // Log the structure of the data being inserted
+      console.log(`Match data structure:`, {
+        id,
+        matchDataType: typeof match,
+        hasMatchId: !!match?.matchId,
+        keys: Object.keys(match || {})
+      });
+      
+      // Use upsert instead of insert to handle existing records
+      const { data, error } = await this.client
+        .from('spectre_match_json')
+        .upsert([{
+          id: id,
+          match_data: match as unknown as any,
+        }], {
+          onConflict: 'id',  // Specify the conflict column
+          ignoreDuplicates: false  // Update the record if it exists
+        })
+        .select();
+      
+      if (error) {
+        console.error(`Database error upserting match ${id}:`, {
+          code: error.code,
+          message: error.message,
+          details: error.details,
+          hint: error.hint
+        });
+        throw new DatabaseError(`Failed to upsert match ${id}: ${error.message}`, { cause: error });
+      }
+      
+      console.log(`Successfully upserted match ${id}`);
+      return data;
+    } catch (error: any) {
+      console.error(`Unexpected error upserting match ${id}:`, {
+        name: error.name,
+        message: error.message,
+        stack: error.stack
+      });
+      
+      // If it's a PostgreSQL error, it might have more details
+      if (error.code) {
+        console.error('PostgreSQL error details:', {
+          code: error.code,
+          detail: error.detail,
+          hint: error.hint,
+          constraint: error.constraint
+        });
+      }
+      
+      throw new DatabaseError(`Failed to upsert match ${id}: ${error.message}`, { cause: error });
     }
-    return data;
   }
 
   async getRawMatch(id: string) {
