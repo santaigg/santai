@@ -1,5 +1,5 @@
 import { AxiosInstance } from 'axios';
-import { ApiResponse, GetTeamsForClientV1Response, Team } from '@repo/pulsefinder-types';
+import { ApiResponse, Team, TeamRoster } from '@repo/pulsefinder-types';
 
 /**
  * Service for interacting with team-related endpoints
@@ -27,7 +27,7 @@ export class TeamService {
    * @param teamId The ID of the team
    * @returns Promise with the team members
    */
-  async getTeamMembers(teamId: string): Promise<ApiResponse<GetTeamsForClientV1Response>> {
+  async getTeamMembers(teamId: string): Promise<ApiResponse<TeamRoster>> {
     const response = await this.client.get(`/v1/teams/${teamId}/members`);
     return response.data;
   }
@@ -37,7 +37,7 @@ export class TeamService {
    * @param playerId The ID of a player to get team stats for
    * @returns Promise with the team stats
    */
-  async getTeamStats(playerId: string): Promise<ApiResponse<GetTeamsForClientV1Response>> {
+  async getTeamStats(playerId: string): Promise<ApiResponse<Team>> {
     const response = await this.client.get(`/v1/teams/${playerId}/stats`);
     return response.data;
   }
@@ -47,7 +47,7 @@ export class TeamService {
    * @param playerIds Array of player IDs to get teams for
    * @returns Promise with the teams for the players
    */
-  async getTeamsForPlayers(playerIds: string[]): Promise<ApiResponse<GetTeamsForClientV1Response>> {
+  async getTeamsForPlayers(playerIds: string[]): Promise<ApiResponse<Team[]>> {
     const response = await this.client.post('/v1/teams/by-players', {
       playerIds
     });

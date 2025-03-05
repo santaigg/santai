@@ -57,3 +57,8 @@ export interface MtnTeamServiceRpcResponse {
         payload: GetTeamsForClientV1Response;
     }
 }
+
+export interface TeamRoster {
+  playerIds: string[];
+  teamId: string;
+}
