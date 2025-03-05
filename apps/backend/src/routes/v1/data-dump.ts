@@ -135,95 +135,140 @@ export const dataDumpRouter = new Elysia({ prefix: '/data-dump' })
   //     })
   //   }
   .post('/matches', async ({ body }) => {
-    const { matchId, teamId, playerIds } = body;
-    if (!matchId && !teamId && !playerIds) {
-      return { error: 'Match ID, team ID, or player ID is required' };
+    let { matchIds, teamIds, playerIds } = body;
+    
+    // Filter out empty strings from the arrays
+    matchIds = matchIds?.filter(id => id) || [];
+    teamIds = teamIds?.filter(id => id) || [];
+    playerIds = playerIds?.filter(id => id) || [];
+    
+    if (matchIds.length === 0 && teamIds.length === 0 && playerIds.length === 0) {
+      return { error: 'At least one valid matchId, teamId, or playerId is required' };
     }
-    if (matchId) {
-      const match = await pulsefinder.match.getMatch(matchId);
-      if (!match.data) {
-        return { error: 'No match data found' };
-      }
-      const matchResponse = match.data;
-      console.log('id', matchResponse.id, 'matchResponse', JSON.stringify(matchResponse.matchData));
-      try {
-        await db.insertRawMatch(matchResponse.id, matchResponse.matchData, matchResponse.date);
-        return { success: true, match };
-      } catch (error: any) {
-        console.error('Error inserting match:', error);
-        
-        // Extract more detailed error information
-        const errorDetails = {
-          name: error.name,
-          message: error.message,
-          cause: error.cause ? {
-            name: error.cause.name,
-            message: error.cause.message,
-            code: error.cause.code,
-            details: error.cause.details,
-            hint: error.cause.hint
-          } : 'No cause'
-        };
-        
-        console.error('Detailed error:', JSON.stringify(errorDetails, null, 2));
-        
-        return { 
-          success: false, 
-          error: `Failed to insert match: ${error.message}`,
-          details: JSON.stringify(errorDetails)
-        };
-      }
-    }
-    if (teamId) {
-      const team = await pulsefinder.match.getTeamMatchHistory(teamId);
-      if (!team.data) {
-        return { error: 'No team data found' };
-      }
-      const matchResponses = team.data;
-      // for each match in teamData, insert the match data
-      for (const matchResponse of matchResponses) {
-        if(matchResponse.matchData) {
-          try {
-            await db.insertRawMatch(matchResponse.id, matchResponse.matchData, matchResponse.date);
-          } catch (error: any) {
-            console.error(`Error inserting match ${matchResponse.id}:`, error);
-            console.error('Details:', error.cause ? JSON.stringify(error.cause) : 'No additional details');
+    
+    let totalMatchesDumped = 0;
+    const errors = [];
+    const dumpedMatchIds = [];
+    
+    // Process matchIds
+    if (matchIds.length > 0) {
+      for (const matchId of matchIds) {
+        try {
+          const match = await pulsefinder.match.getMatch(matchId);
+          if (!match.data) {
+            errors.push(`No data found for match ID: ${matchId}`);
+            continue;
           }
-        } else {
-          console.error(`No match data found for match ${matchResponse.id}`);
+          const matchResponse = match.data;
+          console.log('id', matchResponse.id, 'matchResponse', JSON.stringify(matchResponse.matchData));
+          await db.insertRawMatch(matchResponse.id, matchResponse.matchData, matchResponse.date);
+          totalMatchesDumped++;
+          dumpedMatchIds.push(matchResponse.id);
+        } catch (error: any) {
+          console.error(`Error processing match ${matchId}:`, error);
+          errors.push(`Failed to process match ${matchId}: ${error.message}`);
         }
       }
-      return { success: true, team };
     }
-    if (playerIds) {
-      const player = await pulsefinder.team.getTeamsForPlayers(playerIds);
-      if (!player.data) {
-        return { error: 'No player data found' };
-      }
-      const teams = player.data;
-      for (const team of teams) {
-        if(team.teamId) {
-          const teamData = await pulsefinder.match.getTeamMatchHistory(team.teamId);
-          if (!teamData.data) {
-            return { error: 'No team data found' };
+    
+    // Process teamIds
+    if (teamIds.length > 0) {
+      for (const teamId of teamIds) {
+        try {
+          const team = await pulsefinder.match.getTeamMatchHistory(teamId);
+          if (!team.data) {
+            errors.push(`No data found for team ID: ${teamId}`);
+            continue;
           }
-          const matchResponses = teamData.data;
+          const matchResponses = team.data;
+          
           for (const matchResponse of matchResponses) {
-            try {
-              await db.insertRawMatch(matchResponse.id, matchResponse.matchData, matchResponse.date);
-            } catch (error: any) {
-              console.error(`Error inserting match ${matchResponse.id}:`, error);
-              console.error('Details:', error.cause ? JSON.stringify(error.cause) : 'No additional details');
+            if (!matchResponse || !matchResponse.id) {
+              errors.push(`Invalid match response from team ${teamId}`);
+              continue;
+            }
+            
+            if(matchResponse.matchData) {
+              try {
+                await db.insertRawMatch(matchResponse.id, matchResponse.matchData, matchResponse.date);
+                totalMatchesDumped++;
+                dumpedMatchIds.push(matchResponse.id);
+              } catch (error: any) {
+                console.error(`Error inserting match ${matchResponse.id}:`, error);
+                errors.push(`Failed to insert match ${matchResponse.id}: ${error.message}`);
+              }
+            } else {
+              console.error(`No match data found for match ${matchResponse.id}`);
+              errors.push(`No match data found for match ${matchResponse.id}`);
+            }
+          }
+        } catch (error: any) {
+          console.error(`Error processing team ${teamId}:`, error);
+          errors.push(`Failed to process team ${teamId}: ${error.message}`);
+        }
+      }
+    }
+    
+    // Process playerIds
+    if (playerIds.length > 0) {
+      try {
+        const player = await pulsefinder.team.getTeamsForPlayers(playerIds);
+        if (!player.data) {
+          errors.push(`No player data found for player IDs: ${playerIds.join(', ')}`);
+        } else {
+          const teams = player.data;
+          for (const team of teams) {
+            if(team.teamId) {
+              try {
+                const teamData = await pulsefinder.match.getTeamMatchHistory(team.teamId);
+                if (!teamData.data) {
+                  errors.push(`No team data found for team ID: ${team.teamId}`);
+                  continue;
+                }
+                const matchResponses = teamData.data;
+                for (const matchResponse of matchResponses) {
+                  if (!matchResponse || !matchResponse.id) {
+                    errors.push(`Invalid match response from team ${team.teamId}`);
+                    continue;
+                  }
+                  
+                  try {
+                    await db.insertRawMatch(matchResponse.id, matchResponse.matchData, matchResponse.date);
+                    totalMatchesDumped++;
+                    dumpedMatchIds.push(matchResponse.id);
+                  } catch (error: any) {
+                    console.error(`Error inserting match ${matchResponse.id}:`, error);
+                    errors.push(`Failed to insert match ${matchResponse.id}: ${error.message}`);
+                  }
+                }
+              } catch (error: any) {
+                console.error(`Error processing team ${team.teamId}:`, error);
+                errors.push(`Failed to process team ${team.teamId}: ${error.message}`);
+              }
             }
           }
         }
+      } catch (error: any) {
+        console.error('Error processing players:', error);
+        const playerIdsStr = playerIds.join(', ');
+        errors.push(`Failed to process players [${playerIdsStr}]: ${error.message}`);
       }
     }
+    
+    // Filter out duplicate match IDs
+    const uniqueDumpedMatchIds = Array.from(new Set(dumpedMatchIds));
+    
+    return { 
+      success: true, 
+      totalMatchesDumped,
+      dumpedMatchIds: uniqueDumpedMatchIds,
+      errors: errors.length > 0 ? errors : undefined
+    };
   },
   {
     body: t.Object({
-      matchId: t.Optional(t.String()),
-      teamId: t.Optional(t.String()),
+      matchIds: t.Optional(t.Array(t.String())),
+      teamIds: t.Optional(t.Array(t.String())),
       playerIds: t.Optional(t.Array(t.String()))
     })
   }
