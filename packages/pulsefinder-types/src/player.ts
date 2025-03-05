@@ -34,13 +34,42 @@ export interface BulkProfileRequest {
   playerIds: string[];
 }
 
+export interface GetBulkProfileDataClientV1Response {
+  sequenceNumber: number;
+  response: {
+    requestId: number;
+    type: string;
+    payload: BulkProfileResponse;
+  }
+}
+
+
 /**
  * Bulk profile response
  */
 export interface BulkProfileResponse {
-  success: boolean;
-  message?: string;
-  data?: any; // We keep this as any to avoid exposing internal types
+  bulkProfileData: ProfileData[];
+}
+
+export interface ProfileData {
+  playerId: string;
+  displayName: {
+    displayName: string;
+    discriminator: string;
+  };
+  banner: {
+    itemInstanceId: string;
+    itemType: string;
+    alterationData?: any;
+    attachmentItemInstanceId?: string;
+    itemCatalogId?: string;
+    attachmentItemCatalogId?: string;
+  };
+  crewId?: string;
+  crewScore?: string
+  currentSoloRank?: number;
+  highestTeamRank?: number;
+  divisionType?: string;
 }
 
 /**
@@ -68,3 +97,33 @@ export interface SearchByPlatformResponse {
   message?: string;
   data?: any; // We keep this as any to avoid exposing internal types
 } 
+
+export interface GetPlayerIdentitiesByProviderAccountIdsV1Response {
+  sequenceNumber: number;
+  response: {
+    requestId: number;
+    type: string;
+    payload: {
+      playerIdentities: PlayerIdentity[];
+    };
+  }
+}
+
+export interface PlayerIdentity {
+  pragmaPlayerId: string;
+  pragmaDisplayName: {
+    displayName: string;
+    discriminator: string;
+  };
+  idProviderAccounts: ProviderAccount[];
+  pragmaSocialId: string;
+}
+
+export interface ProviderAccount {
+  idProviderType: string;
+  accountId: string;
+  providerDisplayName: {
+    displayName: string;
+    discriminator: string;
+  };
+}

@@ -1,5 +1,5 @@
 import { AxiosInstance } from 'axios';
-import { ApiResponse, PlayerProfile } from '@repo/pulsefinder-types';
+import { ApiResponse, PlayerIdentity, ProfileData } from '@repo/pulsefinder-types';
 
 /**
  * Service for interacting with player-related endpoints
@@ -16,7 +16,7 @@ export class PlayerService {
    * @param playerIds Array of player IDs to retrieve
    * @returns Promise with the player profiles
    */
-  async getBulkProfiles(playerIds: string[]): Promise<ApiResponse<PlayerProfile[]>> {
+  async getBulkProfiles(playerIds: string[]): Promise<ApiResponse<ProfileData[]>> {
     const response = await this.client.post('/v1/players/profiles/bulk', {
       playerIds
     });
@@ -29,7 +29,7 @@ export class PlayerService {
    * @param accountId The account ID on the platform
    * @returns Promise with the player profile
    */
-  async searchByPlatform(platform: string, accountId: string): Promise<ApiResponse<PlayerProfile>> {
+  async searchByPlatform(platform: string, accountId: string): Promise<ApiResponse<PlayerIdentity>> {
     const response = await this.client.post('/v1/players/search-by-platform', {
       platform,
       accountId
@@ -47,23 +47,23 @@ export class PlayerService {
     return response.data;
   }
 
-  /**
-   * Get player social connections (Discord, Steam, Twitch, etc.)
-   * @param playerId The ID of the player
-   * @returns Promise with the player's social connections
-   */
-  async getSocialConnections(playerId: string): Promise<ApiResponse<any>> {
-    const response = await this.client.get(`/v1/players/${playerId}/social-connections`);
-    return response.data;
-  }
+  // /**
+  //  * Get player social connections (Discord, Steam, Twitch, etc.)
+  //  * @param playerId The ID of the player
+  //  * @returns Promise with the player's social connections
+  //  */
+  // async getSocialConnections(playerId: string): Promise<ApiResponse<any>> {
+  //   const response = await this.client.get(`/v1/players/${playerId}/social-connections`);
+  //   return response.data;
+  // }
 
-  /**
-   * Get player teams
-   * @param playerId The ID of the player
-   * @returns Promise with the player's teams
-   */
-  async getPlayerTeams(playerId: string): Promise<ApiResponse<any>> {
-    const response = await this.client.get(`/v1/players/${playerId}/teams`);
-    return response.data;
-  }
+  // /**
+  //  * Get player teams
+  //  * @param playerId The ID of the player
+  //  * @returns Promise with the player's teams
+  //  */
+  // async getPlayerTeams(playerId: string): Promise<ApiResponse<any>> {
+  //   const response = await this.client.get(`/v1/players/${playerId}/teams`);
+  //   return response.data;
+  // }
 } 
