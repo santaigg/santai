@@ -1063,7 +1063,7 @@ export class DatabaseService {
     return uniqueTeams.length;
   }
 
-  async insertRawMatch(id: string, match: MatchData) {
+  async insertRawMatch(id: string, match: MatchData, date?: string) {
     console.log(`Inserting/updating match ${id} into database`);
     try {
       // Log the structure of the data being inserted
@@ -1080,6 +1080,7 @@ export class DatabaseService {
         .upsert([{
           id: id,
           match_data: match as unknown as any,
+          created_at: date || new Date().toISOString()
         }], {
           onConflict: 'id',  // Specify the conflict column
           ignoreDuplicates: false  // Update the record if it exists
