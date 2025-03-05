@@ -1080,7 +1080,7 @@ export class DatabaseService {
         .upsert([{
           id: id,
           match_data: match as unknown as any,
-          created_at: date || new Date().toISOString()
+          created_at: date ? new Date(date).toISOString() : new Date().toISOString()
         }], {
           onConflict: 'id',  // Specify the conflict column
           ignoreDuplicates: false  // Update the record if it exists
