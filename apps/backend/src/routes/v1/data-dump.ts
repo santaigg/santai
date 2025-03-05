@@ -147,7 +147,7 @@ export const dataDumpRouter = new Elysia({ prefix: '/data-dump' })
       const matchResponse = match.data;
       console.log('id', matchResponse.id, 'matchResponse', JSON.stringify(matchResponse.matchData));
       try {
-        await db.insertRawMatch(matchResponse.id, matchResponse.matchData);
+        await db.insertRawMatch(matchResponse.id, matchResponse.matchData, matchResponse.date);
         return { success: true, match };
       } catch (error: any) {
         console.error('Error inserting match:', error);
@@ -184,7 +184,7 @@ export const dataDumpRouter = new Elysia({ prefix: '/data-dump' })
       for (const matchResponse of matchResponses) {
         if(matchResponse.matchData) {
           try {
-            await db.insertRawMatch(matchResponse.id, matchResponse.matchData);
+            await db.insertRawMatch(matchResponse.id, matchResponse.matchData, matchResponse.date);
           } catch (error: any) {
             console.error(`Error inserting match ${matchResponse.id}:`, error);
             console.error('Details:', error.cause ? JSON.stringify(error.cause) : 'No additional details');
@@ -210,7 +210,7 @@ export const dataDumpRouter = new Elysia({ prefix: '/data-dump' })
           const matchResponses = teamData.data;
           for (const matchResponse of matchResponses) {
             try {
-              await db.insertRawMatch(matchResponse.id, matchResponse.matchData);
+              await db.insertRawMatch(matchResponse.id, matchResponse.matchData, matchResponse.date);
             } catch (error: any) {
               console.error(`Error inserting match ${matchResponse.id}:`, error);
               console.error('Details:', error.cause ? JSON.stringify(error.cause) : 'No additional details');
