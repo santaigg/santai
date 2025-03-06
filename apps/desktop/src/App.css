@@ -1,0 +1,63 @@
+@import "tailwindcss";
+
+:root {
+  --primary: 240 10% 10%;
+  --primary-foreground: 240 10 80%;
+
+  --secondary: 240 8% 12%;
+  --secondary-foreground: 240 3% 95%;
+
+  --accent: 73 97 50%;
+  --accent-foreground: 0 0 0%;
+
+  --muted: 240 4% 20%;
+  --muted-foreground: 240 0% 30%;
+
+  --table: 230 13% 9%;
+  --table-secondary: 250 10% 11%;
+  --table-header: 228 5% 17%;
+
+  --input: 240 16% 8%;
+  --input-foreground: 240 5% 70%;
+
+  --spacing: 1rem;
+  --rounding: 0.25rem;
+
+  --constrict-threshold: 1200px;
+}
+
+@theme {
+  /* Primary colors */
+  --color-primary: hsl(var(--primary) / <alpha-value>);
+  --color-primary-foreground: hsl(var(--primary-foreground) / <alpha-value>);
+
+  /* Secondary colors */
+  --color-secondary: hsl(var(--secondary) / <alpha-value>);
+  --color-secondary-foreground: hsl(var(--secondary-foreground) / <alpha-value>);
+
+  /* Accent colors */
+  --color-accent: hsl(var(--accent) / <alpha-value>);
+  --color-accent-foreground: hsl(var(--accent-foreground) / <alpha-value>);
+
+  /* Muted colors */
+  --color-muted: hsl(var(--muted) / <alpha-value>);
+  --color-muted-foreground: hsl(var(--muted-foreground) / <alpha-value>);
+
+  /* Table colors */
+  --color-table: hsl(var(--table) / <alpha-value>);
+  --color-table-secondary: hsl(var(--table-secondary) / <alpha-value>);
+  --color-table-header: hsl(var(--table-header) / <alpha-value>);
+
+  /* Input colors */
+  --color-input: hsl(var(--input) / <alpha-value>);
+  --color-input-foreground: hsl(var(--input-foreground) / <alpha-value>);
+
+  /* Spacing & Rounding */
+  --spacing: var(--spacing);
+  --radius: var(--rounding);
+  --radius-md: calc(var(--rounding) - 2px);
+  --radius-sm: calc(var(--rounding) - 4px);
+
+  /* Layout constraints */
+  --constrict-threshold: var(--constrict-threshold);
+}
