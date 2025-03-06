@@ -1,0 +1,1 @@
+export { sponsorController } from './sponsor.controller.ts'; 

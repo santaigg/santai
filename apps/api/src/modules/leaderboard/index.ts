@@ -1,0 +1,1 @@
+export { leaderboardController } from './leaderboard.controller.ts'; 
