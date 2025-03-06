@@ -1,6 +1,3 @@
-// This is a simplified version of the database types
-// In a real implementation, you would copy the full database.types.ts from the old-api
-
 export type Json =
   | string
   | number

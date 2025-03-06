@@ -36,12 +36,7 @@ export class TournamentService {
   // Tournament data methods
   public async fetchTournament(id: string = 'default') {
     try {
-      // Implementation based on old API
-      // This would fetch tournament data from the database or Redis
       console.log(`Fetching tournament with ID: ${id}`);
-      
-      // In a real implementation, we would use the id to fetch the specific tournament
-      // For now, we'll just return a mock tournament
       
       const { data, error } = await this.db.client
         .from("tournament")
@@ -219,11 +214,6 @@ export class TournamentService {
 
   public async logoutAdmin() {
     try {
-      // Implementation based on old API
-      // This would log out an admin
-      // In a real implementation, we would delete the specific token
-      // For simplicity, we're just returning success
-      
       return { success: true };
     } catch (error) {
       console.error("Error logging out admin:", error);

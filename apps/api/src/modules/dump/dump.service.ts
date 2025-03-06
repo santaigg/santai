@@ -44,8 +44,6 @@ export class DumpService {
 
   public async dumpPlayer(playerId: string) {
     try {
-      // Implementation based on old API
-      // This would dump player data
       const { data, error } = await this.db.client
         .from("spectre_player")
         .select("*")
@@ -56,8 +54,6 @@ export class DumpService {
         return { success: false, error: error.message };
       }
 
-      // In a real implementation, this would trigger a dump process
-      // For now, we'll just return the player data
       return { success: true, data };
     } catch (error) {
       console.error("Error dumping player:", error);

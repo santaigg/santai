@@ -1,6 +1,6 @@
 import { Elysia } from 'elysia';
 import { v1Router } from './v1/index';
-import { v2Router } from './v2/index';
+// import { v2Router } from './v2/index';
 
 // Main API router that combines all version routers
 export const rootRouter = new Elysia({ prefix: '/api' })
@@ -18,4 +18,4 @@ export const rootRouter = new Elysia({ prefix: '/api' })
   }))
   // Mount versioned routers
   .use(v1Router)
-  .use(v2Router);
+  // .use(v2Router);

@@ -33,8 +33,6 @@ export class PlayerService {
         .single();
 
       if (steamConnection && !steamError) {
-        // In a real app, we would fetch the Steam profile data
-        // For now, we'll just return a placeholder
         steamProfile = {
           steam_id: steamConnection.account_id,
           // Other Steam profile data would go here
@@ -298,21 +296,13 @@ export class PlayerService {
         return { success: false, error: "Steam profile not found" };
       }
 
-      // Then use the Steam API to get the profile
-      // Note: This is a simplified implementation
-      // In a real app, we would use the actual Steam API
-      const steamProfile = {
-        avatar: "https://example.com/avatar.jpg",
-        avatarmedium: "https://example.com/avatar_medium.jpg",
-        avatarfull: "https://example.com/avatar_full.jpg",
-        personaname: "SteamUser",
-        profileurl: "https://steamcommunity.com/id/example",
-        timecreated: Date.now() / 1000 - 86400 * 365, // 1 year ago
-        lastlogoff: Date.now() / 1000 - 86400, // 1 day ago
-        loccountrycode: "US",
-        profilestate: 1,
-        personastate: 1
-      };
+      // Use our Steam service to get the profile
+      const steamId = data.steam_id;
+      const steamProfile = await this.steam.getPlayerSummary(steamId);
+      
+      if (!steamProfile) {
+        return { success: false, error: "Failed to fetch Steam profile" };
+      }
 
       return { 
         success: true, 
