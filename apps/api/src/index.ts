@@ -22,9 +22,6 @@ if (process.env.SENTRY_DSN) {
   console.log('🔍 Sentry initialized');
 }
 
-// Default timeout is 10 seconds, but we'll use 60 seconds for the server
-const SERVER_TIMEOUT = 60000; // 60 seconds
-
 // Create the main app
 const app = new Elysia()
   // Add global middleware
